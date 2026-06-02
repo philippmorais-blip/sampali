@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Financeiro 2026 — Sampali</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--sur:#171b26;--sur2:#1e2335;--brd:#2a3050;--acc:#4f7cff;--acc2:#00d4aa;--txt:#e8ecf4;--mut:#6b7490;--red:#ff6b6b;--ylw:#ffd166;--grn:#06d6a0;--pur:#a78bfa;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+header{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--brd);background:var(--sur);position:sticky;top:0;z-index:100;}
+.logo span:first-child{font-size:1.15rem;font-weight:600;color:var(--acc);display:block;}
+.logo span:last-child{font-size:0.58rem;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;display:block;}
+.ybadge{background:var(--sur2);border:1px solid var(--brd);border-radius:20px;padding:5px 14px;font-size:.82rem;font-weight:500;color:var(--acc);font-family:'DM Mono',monospace;}
+.nav{display:flex;background:var(--sur);border-bottom:1px solid var(--brd);padding:0 2rem;overflow-x:auto;}
+.ntab{padding:13px 22px;font-size:.86rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--mut);font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s;}
+.ntab.on{color:var(--acc);border-bottom-color:var(--acc);}
+.ntab:hover:not(.on){color:var(--txt);}
+.sec{display:none;}.sec.on{display:block;}
+.wrap{padding:2rem;max-width:1380px;margin:0 auto;}
+.savebar{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;}
+.sbtn{padding:8px 20px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.sbtn:hover{opacity:.85;}
+.sbtn2{padding:8px 20px;background:var(--sur2);color:var(--txt);border:1px solid var(--brd);border-radius:8px;font-size:.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.sbtn2:hover{border-color:var(--acc);color:var(--acc);}
+.smsg{font-size:.78rem;color:var(--grn);display:none;}
+.smsg.on{display:block;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:2rem;}
+.card{background:var(--sur);border:1px solid var(--brd);border-radius:12px;padding:1.1rem 1.2rem;}
+.clbl{font-size:.67rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.cval{font-size:1.3rem;font-weight:600;font-family:'DM Mono',monospace;}
+.csub{font-size:.71rem;color:var(--mut);margin-top:3px;}
+.cg{color:var(--grn);}.cr{color:var(--red);}.cy{color:var(--ylw);}.ct{color:var(--acc2);}.cb{color:var(--acc);}
+.mtabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--sur);padding:5px;border-radius:11px;border:1px solid var(--brd);margin-bottom:2rem;}
+.mtab{padding:6px 14px;border-radius:7px;font-size:.79rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--mut);font-family:'DM Sans',sans-serif;transition:all .2s;}
+.mtab.on{background:var(--acc);color:#fff;}
+.mtab:hover:not(.on){color:var(--txt);background:var(--sur2);}
+.mtab.hd{color:var(--txt);}
+.mpanel{display:none;}.mpanel.on{display:block;}
+.slbl{font-size:.69rem;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.9rem;margin-top:.3rem;}
+.abox{background:var(--sur);border:1px solid var(--brd);border-radius:13px;overflow:hidden;margin-bottom:2rem;}
+.abhdr{padding:11px 17px;background:var(--sur2);border-bottom:1px solid var(--brd);font-size:.71rem;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;}
+.at{width:100%;border-collapse:collapse;font-size:.79rem;}
+.at th{padding:9px 11px;text-align:right;font-size:.66rem;font-weight:600;color:var(--mut);text-transform:uppercase;border-bottom:1px solid var(--brd);white-space:nowrap;}
+.at th:first-child{text-align:left;}
+.at td{padding:8px 11px;border-bottom:1px solid rgba(42,48,80,.4);text-align:right;font-family:'DM Mono',monospace;font-size:.77rem;}
+.at td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-weight:500;}
+.at tr:last-child td{border-bottom:none;}
+.at tr:hover td{background:rgba(30,35,53,.5);}
+
+/* ── RECEITA POR CLIENTE ── */
+.rc-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.rc-search{background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:8px 14px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.84rem;width:300px;outline:none;transition:border-color .2s;}
+.rc-search:focus{border-color:var(--acc);}
+.rc-search::placeholder{color:var(--mut);}
+.rc-count{font-size:.79rem;color:var(--mut);margin-left:auto;}
+.rc-wrap{background:var(--sur);border:1px solid var(--brd);border-radius:13px;overflow:hidden;}
+.rc-scroll{overflow-x:auto;max-height:72vh;overflow-y:auto;}
+.rc-tbl{width:100%;border-collapse:collapse;font-size:.77rem;}
+.rc-tbl thead tr{background:var(--sur2);}
+.rc-tbl thead{position:sticky;top:0;z-index:3;}
+.rc-tbl th{padding:9px 8px;text-align:right;font-size:.64rem;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-bottom:1px solid var(--brd);}
+.rc-tbl th:nth-child(1),.rc-tbl th:nth-child(2){text-align:left;}
+.rc-tbl td{padding:6px 8px;border-bottom:1px solid rgba(42,48,80,.3);text-align:right;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--txt);}
+.rc-tbl td:nth-child(1){text-align:center;color:var(--mut);width:60px;}
+.rc-tbl td:nth-child(2){text-align:left;font-family:'DM Sans',sans-serif;font-size:.78rem;}
+.rc-tbl tr:hover td{background:rgba(30,35,53,.5);}
+.rc-tbl tr.rc-sum td{background:var(--sur2);font-weight:700;border-top:2px solid var(--brd);}
+.rc-tbl tr.rc-sum td:nth-child(15){color:var(--acc2);}
+.rc-inp{background:transparent;border:none;color:var(--txt);font-family:'DM Mono',monospace;font-size:.75rem;text-align:right;width:75px;padding:2px 3px;border-radius:3px;}
+.rc-inp:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.rc-inp-id{width:50px;text-align:center;font-family:'DM Sans',sans-serif;}
+.rc-inp-nome{min-width:180px;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78rem;}
+.rc-tot-cell{color:var(--acc2);font-weight:600;}
+.rc-med-cell{color:var(--ylw);}
+.rc-del{background:transparent;border:none;color:var(--mut);cursor:pointer;font-size:.85rem;padding:2px 4px;border-radius:3px;}
+.rc-del:hover{color:var(--red);}
+.rc-footer{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sur2);border-top:1px solid var(--brd);}
+.rc-addbtn{padding:6px 16px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-size:.79rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.rc-addbtn:hover{opacity:.85;}
+
+/* MARGEM */
+.egrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(305px,1fr));gap:15px;margin-bottom:2rem;}
+.ecard{background:var(--sur);border:1px solid var(--brd);border-radius:13px;overflow:hidden;}
+.ehdr{padding:10px 14px;background:var(--sur2);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;}
+.ename{font-size:.84rem;font-weight:600;}
+.mbg{font-size:.76rem;font-family:'DM Mono',monospace;font-weight:600;padding:3px 9px;border-radius:20px;}
+.mbg-p{background:rgba(6,214,160,.15);color:var(--grn);}.mbg-n{background:rgba(255,107,107,.15);color:var(--red);}.mbg-u{background:rgba(79,124,255,.15);color:var(--acc);}
+.ebody{padding:12px 14px;}
+.frow{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(42,48,80,.4);}
+.frow:last-child{border-bottom:none;}
+.flbl{font-size:.73rem;color:var(--mut);}
+.finp{background:transparent;border:none;color:var(--txt);font-family:'DM Mono',monospace;font-size:.8rem;text-align:right;width:130px;padding:3px 5px;border-radius:4px;transition:background .15s;}
+.finp:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.finp::placeholder{color:var(--brd);}
+.fcalc{font-size:.8rem;font-family:'DM Mono',monospace;text-align:right;padding:3px 5px;min-width:130px;}
+.cbox{background:var(--sur);border:1px solid var(--brd);border-radius:13px;padding:1.4rem;margin-bottom:2rem;}
+.bchart{display:flex;flex-direction:column;gap:10px;}
+.brow{display:flex;align-items:center;gap:11px;}
+.bemp{font-size:.76rem;color:var(--mut);width:85px;text-align:right;flex-shrink:0;}
+.btrack{flex:1;height:23px;background:var(--sur2);border-radius:6px;overflow:hidden;position:relative;}
+.bfill{height:100%;border-radius:6px;transition:width .5s;display:flex;align-items:center;padding-left:7px;}
+.bfill span{font-size:.7rem;font-weight:600;color:#fff;font-family:'DM Mono',monospace;white-space:nowrap;}
+/* TAXAS */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-bottom:2.5rem;}
+.scard{background:var(--sur);border:1px solid var(--brd);border-radius:12px;padding:1.2rem;transition:border-color .2s;}
+.scard:hover{border-color:var(--acc);}
+.ttabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--sur);padding:4px;border-radius:10px;border:1px solid var(--brd);width:fit-content;}
+.ttab{padding:7px 18px;border-radius:7px;font-size:.84rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--mut);font-family:'DM Sans',sans-serif;transition:all .2s;}
+.ttab.on{background:var(--acc);color:#fff;}
+.ttab:hover:not(.on){color:var(--txt);background:var(--sur2);}
+.tsec{display:none;}.tsec.on{display:block;}
+.tw{background:var(--sur);border:1px solid var(--brd);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;}
+.tw table{width:100%;border-collapse:collapse;font-size:.84rem;}
+.tw thead tr{background:var(--sur2);border-bottom:1px solid var(--brd);}
+.tw th{padding:11px 15px;text-align:left;font-size:.71rem;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+.tw td{padding:9px 15px;border-bottom:1px solid rgba(42,48,80,.5);color:var(--txt);}
+.tw tr:last-child td{border-bottom:none;}
+.tw tr.tr td{background:var(--sur2);font-weight:600;color:var(--acc2);font-family:'DM Mono',monospace;font-size:.81rem;border-top:1px solid var(--brd);}
+.tw tr.mr td{color:var(--mut);font-size:.79rem;font-family:'DM Mono',monospace;}
+.editable{background:transparent;border:none;color:var(--txt);font-family:'DM Mono',monospace;font-size:.82rem;width:100%;min-width:75px;padding:3px 5px;border-radius:4px;transition:background .15s;text-align:right;}
+.editable:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.editable::placeholder{color:var(--brd);}
+td.mc{font-weight:500;color:var(--txt);width:115px;}
+td.tc{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--ylw);text-align:right;font-weight:500;}
+tr.emp td{opacity:.4;}
+/* MULTAS */
+.mwrap{background:var(--sur);border:1px solid var(--brd);border-radius:13px;overflow:hidden;margin-bottom:1.5rem;}
+.mt{width:100%;border-collapse:collapse;font-size:.81rem;}
+.mt thead tr{background:var(--sur2);border-bottom:1px solid var(--brd);}
+.mt th{padding:10px 12px;text-align:left;font-size:.66rem;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+.mt td{padding:9px 12px;border-bottom:1px solid rgba(42,48,80,.4);color:var(--txt);vertical-align:middle;}
+.mt tr:last-child td{border-bottom:none;}
+.mt tr:hover td{background:rgba(30,35,53,.4);}
+.mt tr.mtr td{background:var(--sur2);font-weight:600;color:var(--red);font-family:'DM Mono',monospace;border-top:1px solid var(--brd);}
+.minp{background:transparent;border:none;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.8rem;width:100%;padding:3px 4px;border-radius:4px;transition:background .15s;}
+.minp:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.minp::placeholder{color:var(--brd);}
+.minp-v{font-family:'DM Mono',monospace;text-align:right;}
+.badd{padding:6px 14px;background:transparent;border:1px dashed var(--brd);border-radius:8px;color:var(--mut);font-size:.79rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.5rem;}
+.badd:hover{border-color:var(--acc);color:var(--acc);}
+.bdel{background:transparent;border:none;color:var(--brd);font-size:.95rem;cursor:pointer;padding:2px 5px;border-radius:4px;}
+.bdel:hover{color:var(--red);}
+/* RELATORIO */
+.rsec{background:var(--sur);border:1px solid var(--brd);border-radius:13px;overflow:hidden;margin-bottom:1.5rem;}
+.rshdr{padding:11px 15px;background:var(--sur2);border-bottom:1px solid var(--brd);font-size:.8rem;font-weight:600;color:var(--pur);}
+.rsbody{padding:13px 15px;}
+.rfrow{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,48,80,.4);}
+.rfrow:last-child{border-bottom:none;}
+.rflbl{font-size:.73rem;color:var(--mut);min-width:185px;flex-shrink:0;padding-top:4px;}
+.rfinp{background:transparent;border:none;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.81rem;width:100%;padding:3px 5px;border-radius:4px;transition:background .15s;}
+.rfinp:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.rfinp::placeholder{color:var(--brd);}
+.rftarea{background:transparent;border:none;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.81rem;width:100%;padding:3px 5px;border-radius:4px;resize:vertical;min-height:55px;line-height:1.5;}
+.rftarea:focus{outline:none;background:var(--sur2);color:var(--acc2);}
+.rftarea::placeholder{color:var(--brd);}
+.rfdisplay{font-family:'DM Mono',monospace;font-size:.81rem;padding:3px 5px;color:var(--acc2);}
+.rtable{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:8px;}
+.rtable thead tr{background:var(--sur2);}
+.rtable th{padding:8px 10px;text-align:left;font-size:.67rem;font-weight:600;color:var(--mut);text-transform:uppercase;}
+.rtable td{padding:7px 10px;border-bottom:1px solid rgba(42,48,80,.4);}
+.rtable tr:last-child td{border-bottom:none;}
+.rtable tr.rtot td{background:var(--sur2);font-weight:600;border-top:1px solid var(--brd);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span>Sampali</span><span>Contabilidade</span></div>
+  <div class="ybadge">2026</div>
+</header>
+
+
+
+<div class="nav">
+  <button class="ntab on" onclick="showSec('margem',this)">📈 Margem Líquida</button>
+  <button class="ntab" onclick="showSec('taxas',this)">💳 Taxas Bancárias</button>
+  <button class="ntab" onclick="showSec('multas',this)">⚠️ Multas Operacionais</button>
+  <button class="ntab" onclick="showSec('relatorio',this)">📊 Relatório de Clientes</button>
+  <button class="ntab" onclick="showSec('receita',this)">💰 Receita por Cliente</button>
+</div>
+
+<!-- MARGEM -->
+<div class="sec on" id="sec-margem"><div class="wrap">
+  <div class="savebar"><button class="sbtn" onclick="saveSec('margem')">💾 Salvar</button><button class="sbtn2" onclick="if(confirm('Resetar para dados originais?')){localStorage.removeItem('s_mg');location.reload();}">🔄 Resetar</button><button class="sbtn2" onclick="exportarDados()">⬇️ Exportar backup</button><button class="sbtn2" onclick="document.getElementById('import-input').click()">⬆️ Importar backup</button><input type="file" id="import-input" accept=".json" style="display:none" onchange="importarDados(this)"><span class="smsg" id="smsg-margem">✓ Salvo!</span></div>
+  <div class="mtabs" id="mtabs-margem"></div>
+  <div id="mpanels-margem"></div>
+  <div class="slbl">Visão anual — Margem Líquida %</div>
+  <div class="abox"><div class="abhdr">Margem Líquida % — 2026</div><div style="overflow-x:auto"><table class="at"><thead><tr><th>Empresa</th><th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th></tr></thead><tbody id="at-mg"></tbody></table></div></div>
+  <div class="slbl">Visão anual — Receita</div>
+  <div class="abox"><div class="abhdr">Receita (R$) — 2026</div><div style="overflow-x:auto"><table class="at"><thead><tr><th>Empresa</th><th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th></tr></thead><tbody id="at-rc"></tbody></table></div></div>
+</div></div>
+
+<!-- TAXAS -->
+<div class="sec" id="sec-taxas"><div class="wrap">
+  <div class="savebar"><button class="sbtn" onclick="saveSec('taxas')">💾 Salvar</button><button class="sbtn2" onclick="if(confirm('Resetar para dados originais?')){localStorage.removeItem('s_tx');location.reload();}">🔄 Resetar</button><button class="sbtn2" onclick="exportCSV()">📥 Exportar CSV</button><button class="sbtn2" onclick="exportarDados()">⬇️ Exportar backup</button><button class="sbtn2" onclick="document.getElementById('import-input').click()">⬆️ Importar backup</button><span class="smsg" id="smsg-taxas">✓ Salvo!</span></div>
+  <div class="sgrid">
+    <div class="scard"><div class="clbl">Superlógica — Total</div><div class="cval ct" id="sum-sl">—</div><div class="csub" id="sum-sl-b"></div></div>
+    <div class="scard"><div class="clbl">Asaas Contábil</div><div class="cval ct" id="sum-co">—</div></div>
+    <div class="scard"><div class="clbl">Asaas Societário</div><div class="cval ct" id="sum-so">—</div></div>
+    <div class="scard"><div class="clbl">Asaas CNES</div><div class="cval ct" id="sum-cn">—</div></div>
+    <div class="scard"><div class="clbl">Asaas Regulatório</div><div class="cval ct" id="sum-rg">—</div></div>
+    <div class="scard" style="border-color:var(--acc)"><div class="clbl">Total Geral</div><div class="cval cb" id="sum-tt">—</div></div>
+  </div>
+  <div class="ttabs">
+    <button class="ttab on" onclick="showTTab('sl',this)">Superlógica</button>
+    <button class="ttab" onclick="showTTab('co',this)">Contábil</button>
+    <button class="ttab" onclick="showTTab('so',this)">Societário</button>
+    <button class="ttab" onclick="showTTab('cn',this)">CNES</button>
+    <button class="ttab" onclick="showTTab('rg',this)">Regulatório</button>
+  </div>
+  <div class="tsec on" id="tt-sl"><div class="tw"><table><thead><tr><th>Mês</th><th style="text-align:right">Taxa por boleto (R$2,99)</th><th style="text-align:right">Boletos pagos</th></tr></thead><tbody id="tb-sl"></tbody></table></div></div>
+  <div class="tsec" id="tt-co"><div class="tw"><table><thead><tr><th>Mês</th><th style="text-align:right">Boletos/Pix (R$1,99)</th><th style="text-align:right">Cartão</th><th style="text-align:right">NF (R$0,99)</th><th style="text-align:right">Antecipação</th><th style="text-align:right">Total/mês</th></tr></thead><tbody id="tb-co"></tbody></table></div></div>
+  <div class="tsec" id="tt-so"><div class="tw"><table><thead><tr><th>Mês</th><th style="text-align:right">Boletos/Pix (R$1,99)</th><th style="text-align:right">Cartão</th><th style="text-align:right">NF (R$0,99)</th><th style="text-align:right">Antecipação</th><th style="text-align:right">Total/mês</th></tr></thead><tbody id="tb-so"></tbody></table></div></div>
+  <div class="tsec" id="tt-cn"><div class="tw"><table><thead><tr><th>Mês</th><th style="text-align:right">Boletos/Pix (R$1,99)</th><th style="text-align:right">Cartão</th><th style="text-align:right">NF (R$0,99)</th><th style="text-align:right">Antecipação</th><th style="text-align:right">Total/mês</th></tr></thead><tbody id="tb-cn"></tbody></table></div></div>
+  <div class="tsec" id="tt-rg"><div class="tw"><table><thead><tr><th>Mês</th><th style="text-align:right">Boletos/Pix (R$1,99)</th><th style="text-align:right">Cartão</th><th style="text-align:right">NF (R$0,49)</th><th style="text-align:right">Antecipação</th><th style="text-align:right">Total/mês</th></tr></thead><tbody id="tb-rg"></tbody></table></div></div>
+</div></div>
+
+<!-- MULTAS -->
+<div class="sec" id="sec-multas"><div class="wrap">
+  <div class="savebar"><button class="sbtn" onclick="saveSec('multas')">💾 Salvar</button><button class="sbtn2" onclick="if(confirm('Resetar para dados originais?')){localStorage.removeItem('s_ml');location.reload();}">🔄 Resetar</button><button class="sbtn2" onclick="exportarDados()">⬇️ Exportar backup</button><button class="sbtn2" onclick="document.getElementById('import-input').click()">⬆️ Importar backup</button><span class="smsg" id="smsg-multas">✓ Salvo!</span></div>
+  <div class="cards" id="mul-cards"></div>
+  <div class="mtabs" id="mtabs-multas"></div>
+  <div id="mpanels-multas"></div>
+  <div class="slbl">Visão anual</div>
+  <div class="abox"><div class="abhdr">Total de multas — 2026</div>
+    <table class="at"><thead><tr><th>Mês</th><th style="text-align:right">Total (R$)</th><th>Ocorrências</th></tr></thead><tbody id="at-mul"></tbody></table>
+  </div>
+</div></div>
+
+<!-- RELATORIO -->
+<div class="sec" id="sec-relatorio"><div class="wrap">
+  <div class="savebar"><button class="sbtn" onclick="saveSec('relatorio')">💾 Salvar</button><button class="sbtn2" onclick="if(confirm('Resetar para dados originais?')){localStorage.removeItem('s_rl');location.reload();}">🔄 Resetar</button><button class="sbtn2" onclick="exportarDados()">⬇️ Exportar backup</button><button class="sbtn2" onclick="document.getElementById('import-input').click()">⬆️ Importar backup</button><span class="smsg" id="smsg-relatorio">✓ Salvo!</span></div>
+  <div class="cards" id="rel-cards"></div>
+  <div class="mtabs" id="mtabs-relatorio"></div>
+  <div id="mpanels-relatorio"></div>
+  <div class="slbl">Visão anual</div>
+  <div class="abox"><div class="abhdr">Resumo anual — Relatório de clientes 2026</div><div style="overflow-x:auto">
+    <table class="at"><thead><tr><th>Indicador</th><th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th></tr></thead><tbody id="at-rel"></tbody></table>
+  </div></div>
+</div></div>
+
+
+<div class="sec" id="sec-receita"><div class="wrap">
+  <div class="savebar"><button class="sbtn" onclick="rcSave()">💾 Salvar</button><button class="sbtn2" onclick="if(confirm('Resetar para dados originais?')){localStorage.removeItem('s_rc');rcInit();}">🔄 Resetar</button><button class="sbtn2" onclick="exportarDados()">⬇️ Exportar backup</button><button class="sbtn2" onclick="document.getElementById('import-input').click()">⬆️ Importar backup</button><span class="smsg" id="smsg-rc">✓ Salvo!</span></div>
+  <div class="rc-toolbar">
+    <input class="rc-search" id="rc-search" type="text" placeholder="🔍  Buscar por código ou nome..." oninput="rcFilter()">
+    <span class="rc-count" id="rc-count"></span>
+  </div>
+  <div class="rc-wrap">
+    <div class="rc-scroll">
+      <table class="rc-tbl">
+        <thead><tr>
+          <th>Ident.</th><th>Cliente</th>
+          <th>Fev/25</th><th>Mar/25</th><th>Abr/25</th><th>Mai/25</th>
+          <th>Jun/25</th><th>Jul/25</th><th>Ago/25</th><th>Set/25</th>
+          <th>Out/25</th><th>Nov/25</th><th>Dez/25</th><th>Jan/26</th>
+          <th style="color:var(--acc2)">Total</th>
+          <th style="color:var(--ylw)">Média/Mês</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="rc-tbody"></tbody>
+      </table>
+    </div>
+    <div class="rc-footer">
+      <button class="rc-addbtn" onclick="rcAdd()">+ Adicionar cliente</button>
+    </div>
+  </div>
+</div></div>
+
+<script>
+const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const EMPS=['CNES','Regulatório','Licenças','Sampali'];
+const EC={CNES:'#4f7cff','Regulatório':'#a78bfa','Licenças':'#ffd166',Sampali:'#00d4aa'};
+
+
+// ── RECEITA POR CLIENTE ──
+const RC_ORIG=[{"id": "3", "nome": "Condomínio Do Edifício Chilelli", "meses": [1756.61, 1756.61, 1458.11, 1458.11, 1458.11, 1458.11, 1458.11, 1756.11, 1756.11, 1458.11, 1458.11, 1458.11], "total": 18690.32, "media": 1557.53}, {"id": "8", "nome": "Condominio Do Edificio Livia", "meses": [1572.93, 975.93, 975.93, 975.93, 975.93, 975.93, 975.93, 975.93, 975.93, 988.06, 988.06, 975.93], "total": 12332.42, "media": 1027.7}, {"id": "9", "nome": "Condominio Do Edificio Guadalajara", "meses": [1109.98, 1097.92, 1097.92, 1097.92, 1097.92, 1110.05, 1097.92, 1097.92, 1097.92, 1097.92, 1110.05, 1097.92], "total": 13211.36, "media": 1100.95}, {"id": "11", "nome": "Leonardo Mendez Costa", "meses": [515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16, 515.16], "total": 6181.92, "media": 515.16}, {"id": "12", "nome": "Rosane Lopes Portes Mendes", "meses": [169.36, 169.36, 192.41, 169.36, 169.45, 169.36, 169.53, 192.54, 180.88, 192.41, 169.36, 346.05], "total": 2290.07, "media": 190.84}, {"id": "15", "nome": "Condominio Do Edifício Michelângelo", "meses": [914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92, 914.92], "total": 10979.04, "media": 914.92}, {"id": "18", "nome": "Ah Psicologia E Saude Eireli", "meses": [423.24, 452.59, 437.91, 437.91, 423.24, 423.24, 437.91, 408.58, 423.24, 423.24, 512.4, 541.75], "total": 5345.25, "media": 445.44}, {"id": "19", "nome": "Distribuidora São Francisco S/c Ltda.", "meses": [264.5, 264.5, 264.52, 264.5, 264.64, 264.5, 264.52, 264.52, 264.54, 264.59, 264.5, 264.5], "total": 3174.33, "media": 264.53}, {"id": "27", "nome": "Patricia Silva Rego", "meses": [111.99, 111.99, 124.12, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 112.07, 111.99, 111.99], "total": 1356.09, "media": 113.01}, {"id": "31", "nome": "M L V Negreiros Artigos Religiosos Ltda Me", "meses": [474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52, 474.52], "total": 5694.24, "media": 474.52}, {"id": "39", "nome": "Curso Preparatorio Dominantes Ltda", "meses": [693.12, 693.12, 693.12, 693.12, 693.12, 693.12, 337.49, 337.49, 337.49, 337.49, 337.49, 337.49], "total": 6183.66, "media": 515.3}, {"id": "41", "nome": "Systemsat Solucoes E Consultoria Em Comunicacao De Dados Ltda", "meses": [2062.78, 2062.78, 2062.79, 2062.79, 2062.78, 2062.77, 2083.27, 2083.29, 2226.87, 2193.84, 2107.53, 2083.27], "total": 25154.76, "media": 2096.23}, {"id": "43", "nome": "Ronald Teixeira Alves Júnior", "meses": [672.92, 672.94, 672.92, 672.92, 672.92, 672.94, 672.93, 672.93, 672.93, 672.92, 672.92, 672.93], "total": 8075.12, "media": 672.93}, {"id": "44", "nome": "Sérgio Caetano De Barros", "meses": [167.99, 167.99, 167.99, 204.39, 204.47, 167.99, 167.99, 167.99, 167.99, 167.99, 168.01, 167.99], "total": 2088.78, "media": 174.07}, {"id": "45", "nome": "Manon Teixeira Leite", "meses": [672.92, 672.92, 672.92, 672.92, 540.3, 672.92, 0, 0, 0, 0, 0, 0], "total": 3904.9, "media": 650.82}, {"id": "55", "nome": "Daurea Helena Costa Dias", "meses": [1615.43, 1740.27, 1615.43, 1615.44, 1615.43, 1627.93, 1615.43, 1490.59, 1490.59, 1490.59, 1490.59, 1503.08], "total": 18910.8, "media": 1575.9}, {"id": "61", "nome": "Paulo Roberto Rezende Ventura", "meses": [672.93, 672.92, 672.93, 672.92, 672.92, 672.92, 672.92, 672.92, 672.92, 672.92, 672.92, 672.92], "total": 8075.06, "media": 672.92}, {"id": "73", "nome": "Ronald Hazolmere Williams", "meses": [112.15, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99], "total": 1344.04, "media": 112.0}, {"id": "74", "nome": "Nw Comercio De Tecnologia De Rastreamento De Ativos Eireli", "meses": [2085.63, 2085.63, 2085.63, 2085.63, 2085.63, 2097.76, 2097.76, 2085.64, 2184.82, 2184.13, 2085.63, 2085.63], "total": 25249.52, "media": 2104.13}, {"id": "77", "nome": "Caio Figueiredo Nogueira", "meses": [111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99], "total": 1343.88, "media": 111.99}, {"id": "80", "nome": "H M Representacoes Ltda - Me", "meses": [296.59, 296.59, 296.59, 308.72, 296.59, 296.59, 296.59, 296.59, 296.59, 296.59, 296.59, 296.59], "total": 3571.21, "media": 297.6}, {"id": "81", "nome": "Condomínio Do Edifício Nossa Senhora Da Saúde", "meses": [487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96, 487.96], "total": 5855.52, "media": 487.96}, {"id": "84", "nome": "Consultorio Multi Odonto Ltda - Me", "meses": [533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85, 533.85], "total": 6406.2, "media": 533.85}, {"id": "136", "nome": "Maria De Lourdes Leitão Silveira", "meses": [335.97, 335.97, 348.1, 335.97, 335.97, 335.97, 335.97, 335.97, 335.97, 335.97, 335.97, 335.97], "total": 4043.77, "media": 336.98}, {"id": "144", "nome": "Multiclinic Odontologia", "meses": [0, 0, 710.79, 836.33, 870.41, 850.33, 743.12, 757.61, 633.67, 1102.03, 1102.03, 993.7], "total": 8600.02, "media": 860.0}, {"id": "145", "nome": "Multiclinic Odontologia Ltda", "meses": [797.8, 773.45, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54], "total": 9306.65, "media": 775.55}, {"id": "151", "nome": "Walder José Xavier Reis", "meses": [111.99, 112.04, 112.01, 111.99, 112.07, 111.99, 111.99, 111.99, 111.99, 111.99, 124.12, 111.99], "total": 1356.16, "media": 113.01}, {"id": "152", "nome": "Estetic Dente Clínica Odontológica", "meses": [706.19, 683.79, 683.79, 683.79, 683.79, 683.79, 683.79, 683.79, 683.79, 683.79, 683.79, 1369.62], "total": 8913.71, "media": 742.81}, {"id": "154", "nome": "Alexandre Dunaev", "meses": [579.84, 579.84, 579.84, 579.84, 579.84, 579.84, 595.84, 579.84, 579.84, 579.84, 579.84, 579.84], "total": 6974.08, "media": 581.17}, {"id": "156", "nome": "Rosângela Silveira Muzy", "meses": [124.12, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99], "total": 1356.01, "media": 113.0}, {"id": "164", "nome": "Burguetta", "meses": [288.64, 288.64, 288.7, 288.64, 288.64, 288.64, 288.85, 288.64, 288.81, 387.14, 387.37, 282.47], "total": 3655.18, "media": 304.6}, {"id": "165", "nome": "Ali Adm E Gestao Ltda", "meses": [288.64, 288.8, 313.65, 288.64, 288.64, 288.64, 288.85, 288.64, 288.81, 387.14, 387.37, 288.64], "total": 3686.46, "media": 307.2}, {"id": "166", "nome": "Fonohero Clinica Multiprofissional Macae", "meses": [697.92, 697.92, 719.5, 697.92, 697.92, 697.92, 697.92, 697.92, 536.12, 697.92, 697.92, 697.92], "total": 8234.82, "media": 686.24}, {"id": "168", "nome": "Clinica Odontologica Barra Dimension Eireli", "meses": [584.63, 599.3, 873.13, 873.13, 731.34, 731.34, 731.35, 731.34, 746.02, 878.06, 746.02, 878.06], "total": 9103.72, "media": 758.64}, {"id": "170", "nome": "Brm Telecom Submarina Ltda", "meses": [343.14, 343.14, 343.14, 355.27, 343.14, 343.14, 343.14, 343.14, 343.14, 343.14, 343.14, 343.14], "total": 4129.81, "media": 344.15}, {"id": "174", "nome": "Ssg Odontologia Eireli", "meses": [1063.97, 1063.97, 1063.97, 1033.27, 1045.75, 1035.78, 808.45, 795.97, 795.97, 795.97, 795.98, 795.97], "total": 11095.02, "media": 924.59}, {"id": "177", "nome": "Sb. C Clinica Odontologica Ltda", "meses": [785.67, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54, 773.54], "total": 9294.61, "media": 774.55}, {"id": "178", "nome": "Ubx Datacenter E Telecomunicacoes Ltda", "meses": [471.34, 470.96, 482.57, 471.28, 471.12, 482.25, 470.96, 504.67, 470.96, 470.99, 470.98, 945.05], "total": 6183.13, "media": 515.26}, {"id": "179", "nome": "Felitti Odontologia Integrada", "meses": [773.54, 785.67, 773.54, 803.54, 773.54, 773.54, 773.54, 1055.87, 1055.87, 773.54, 773.54, 773.54], "total": 9889.27, "media": 824.11}, {"id": "182", "nome": "Helio De Brito Cavalcanti", "meses": [111.99, 136.25, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 124.12, 124.12], "total": 1392.4, "media": 116.03}, {"id": "183", "nome": "Arm Salao De Beleza Ltda", "meses": [423.33, 578.97, 579.15, 579.17, 579.17, 579.17, 579.17, 155.82, 155.82, 155.82, 155.82, 155.82], "total": 4677.23, "media": 389.77}, {"id": "190", "nome": "Caio Serodio Nogueira", "meses": [111.99, 111.99, 112.03, 111.99, 111.99, 112.01, 123.2, 125.86, 128.7, 111.99, 111.99, 223.94], "total": 1497.68, "media": 124.81}, {"id": "193", "nome": "Jf Odontologia Especializada Ltda", "meses": [295.6, 295.6, 295.6, 295.6, 295.6, 295.6, 295.6, 295.61, 295.6, 295.6, 295.6, 295.6], "total": 3547.21, "media": 295.6}, {"id": "194", "nome": "Victor Hugo Almeida Adm E Gestao Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1686.34], "total": 1686.34, "media": 1686.34}, {"id": "198", "nome": "Sampaio Representações Comerciais Ltda", "meses": [253.0, 253.0, 253.0, 253.0, 253.0, 253.0, 0, 0, 0, 0, 0, 0], "total": 1518.0, "media": 253.0}, {"id": "199", "nome": "Rophe Odontologia", "meses": [1073.91, 1054.5, 1054.49, 1205.47, 1215.37, 1054.5, 1054.49, 1054.5, 1054.49, 1205.47, 903.53, 903.52], "total": 12834.24, "media": 1069.52}, {"id": "200", "nome": "Rebecca Louback Serviços Odontológicos Ltda", "meses": [379.82, 379.82, 379.82, 379.82, 379.82, 379.82, 379.82, 379.82, 379.82, 391.95, 379.82, 379.82], "total": 4569.97, "media": 380.83}, {"id": "203", "nome": "Deoclecio Bezerra Brito", "meses": [682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58, 682.58], "total": 8190.96, "media": 682.58}, {"id": "209", "nome": "Medcon", "meses": [774.14, 608.07, 925.11, 925.13, 774.21, 774.14, 608.08, 753.65, 904.62, 753.65, 753.65, 753.65], "total": 9308.1, "media": 775.68}, {"id": "211", "nome": "Odontoalverca Clínica Odontológica Ltda", "meses": [412.03, 569.96, 412.03, 412.03, 569.96, 569.96, 569.96, 857.09, 584.31, 569.96, 412.03, 713.52], "total": 6652.84, "media": 554.4}, {"id": "215", "nome": "Tathiane Cavaggioni Cruz", "meses": [246.82, 246.82, 246.83, 246.82, 246.82, 246.84, 246.83, 246.83, 246.83, 246.83, 246.82, 246.82], "total": 2961.91, "media": 246.83}, {"id": "216", "nome": "Specialites Odontologia Integrada", "meses": [405.32, 435.51, 534.01, 534.01, 752.55, 435.51, 601.58, 450.61, 601.58, 435.51, 601.58, 435.51], "total": 6223.28, "media": 518.61}, {"id": "218", "nome": "Instituto Saúde Oral E Maxilofacial Integrado Ltda", "meses": [405.32, 405.32, 405.32, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 405.32, 405.32, 435.51], "total": 5075.17, "media": 422.93}, {"id": "219", "nome": "Centro Medico Ana Valenca Ltda", "meses": [424.37, 405.32, 405.32, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17], "total": 3972.54, "media": 331.05}, {"id": "222", "nome": "Prodents Odonto", "meses": [1136.8, 997.28, 1276.32, 1136.8, 1276.32, 1276.32, 1415.84, 1304.22, 1429.79, 1290.27, 1150.75, 1429.79], "total": 15120.5, "media": 1260.04}, {"id": "223", "nome": "T&a Rangel Medicina Ambulatorial Ltda", "meses": [863.39, 1024.77, 1024.77, 1024.77, 1171.49, 1171.5, 1171.49, 1171.49, 1024.77, 1171.49, 1174.78, 1174.77], "total": 13169.48, "media": 1097.46}, {"id": "224", "nome": "Ssat Desenvolvimento De Software Ltda", "meses": [2062.78, 2062.78, 2062.8, 1990.42, 1930.11, 2062.78, 2062.78, 2062.79, 2161.29, 2161.3, 2062.79, 2062.78], "total": 24745.4, "media": 2062.12}, {"id": "225", "nome": "Simone Silva De Lima", "meses": [246.95, 246.83, 246.83, 246.83, 253.82, 246.83, 246.83, 246.83, 246.83, 246.83, 246.82, 246.84], "total": 2969.07, "media": 247.42}, {"id": "227", "nome": "Shirley De Souza Pinto", "meses": [258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78, 258.78], "total": 3105.36, "media": 258.78}, {"id": "231", "nome": "Cintia Tcheou Tavares", "meses": [1308.47, 1308.47, 1308.47, 1459.44, 1308.47, 1308.47, 1308.47, 1474.54, 1308.47, 1459.44, 1459.44, 1489.63], "total": 16501.78, "media": 1375.15}, {"id": "235", "nome": "Jar Clinica Odontologica Ltda", "meses": [405.32, 405.32, 435.51, 435.51, 435.51, 435.51, 450.61, 435.51, 435.51, 405.32, 435.51, 435.51], "total": 5150.65, "media": 429.22}, {"id": "237", "nome": "Coafo", "meses": [353.65, 355.05, 366.25, 353.84, 353.65, 353.65, 357.01, 353.65, 353.68, 355.09, 356.05, 354.01], "total": 4265.58, "media": 355.46}, {"id": "240", "nome": "Rodrigo Fleming De Almeida", "meses": [125.48, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15, 424.15], "total": 4791.13, "media": 399.26}, {"id": "242", "nome": "Fioravanti Calheiros Servicos Medicos Ltda", "meses": [904.63, 781.38, 1083.32, 932.36, 932.35, 932.37, 932.35, 932.35, 1083.34, 932.37, 1129.35, 1083.34], "total": 11659.51, "media": 971.63}, {"id": "245", "nome": "Sorio Clinica De Emergencia 24 Horas Ltda", "meses": [865.82, 860.01, 780.09, 625.87, 508.31, 649.02, 767.23, 780.09, 767.23, 767.45, 895.75, 895.9], "total": 9162.77, "media": 763.56}, {"id": "246", "nome": "Fp Rego Negocios Ltda", "meses": [304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17], "total": 3650.04, "media": 304.17}, {"id": "248", "nome": "Espaco Home Care", "meses": [752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55, 752.55], "total": 9030.6, "media": 752.55}, {"id": "251", "nome": "Adriane Da Matta Oral Studio", "meses": [304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 435.51], "total": 3781.38, "media": 315.12}, {"id": "253", "nome": "André Luiz Rodrigues Rangel", "meses": [246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82], "total": 2961.84, "media": 246.82}, {"id": "254", "nome": "Danielle Cabral Dos Santos", "meses": [124.12, 112.29, 111.99, 111.99, 111.99, 111.99, 112.01, 111.99, 111.99, 111.99, 111.99, 111.99], "total": 1356.33, "media": 113.03}, {"id": "256", "nome": "Gislene Santos De Macedo", "meses": [227.83, 227.83, 227.83, 227.83, 227.83, 227.86, 227.83, 227.83, 227.83, 227.83, 227.83, 455.66], "total": 2961.82, "media": 246.82}, {"id": "257", "nome": "Julio Andre Raimundo", "meses": [246.82, 246.82, 246.82, 246.75, 246.82, 246.83, 246.82, 246.82, 246.82, 246.82, 246.82, 246.82], "total": 2961.78, "media": 246.81}, {"id": "258", "nome": "Mercante Clínica Cirúrgica Ltda Epp", "meses": [304.17, 405.32, 405.32, 405.33, 405.33, 405.33, 405.32, 405.33, 405.33, 405.33, 405.32, 405.32], "total": 4762.75, "media": 396.9}, {"id": "261", "nome": "Niobe Ferreira De Carvalho", "meses": [542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4, 542.4], "total": 6508.8, "media": 542.4}, {"id": "262", "nome": "Empresa Mania De Sorrir Clinica Odontologica Ltda", "meses": [773.04, 622.07, 622.07, 773.04, 773.04, 773.04, 924.01, 924.01, 924.01, 924.01, 924.01, 924.01], "total": 9880.36, "media": 823.36}, {"id": "263", "nome": "Gabriella Teixeira Pinto Da Costa Clinica Medica Gastro Me", "meses": [405.32, 405.32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 810.64, "media": 405.32}, {"id": "264", "nome": "Dra. Daniela Nadruz Clinica Medica Eireli", "meses": [405.32, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 450.61, 435.51], "total": 5211.03, "media": 434.25}, {"id": "265", "nome": "Qualy X Servicos Radiologicos Especializados Ltda", "meses": [3826.45, 3674.99, 3674.99, 1356.43, 1507.4, 1356.43, 1356.43, 1356.43, 2107.4, 1956.43, 1507.4, 1507.4], "total": 25188.18, "media": 2099.01}, {"id": "268", "nome": "Lmc Clinica Odontologica Ltda", "meses": [684.28, 684.28, 684.28, 684.28, 709.25, 684.28, 684.28, 559.44, 559.44, 559.44, 559.44, 584.41], "total": 7637.1, "media": 636.43}, {"id": "270", "nome": "Perione Odontologia De Resultados", "meses": [1235.72, 1072.52, 1106.28, 874.25, 874.23, 994.14, 994.14, 858.16, 875.8, 970.99, 970.99, 984.59], "total": 11811.81, "media": 984.32}, {"id": "273", "nome": "Fernandes Distribuidora Rj Ltda", "meses": [287.14, 383.32, 383.33, 287.14, 383.33, 287.14, 383.33, 287.14, 412.04, 287.14, 287.14, 287.14], "total": 3955.33, "media": 329.61}, {"id": "274", "nome": "Ivan Rafael Calabrio Odontologia Ltda", "meses": [707.26, 707.26, 606.12, 737.45, 707.26, 707.26, 737.45, 752.55, 498.94, 737.45, 737.45, 737.46], "total": 8373.91, "media": 697.83}, {"id": "279", "nome": "Centro De Reabilitação Oral Ottoni Ceccato Ltda", "meses": [424.38, 450.61, 420.42, 420.44, 405.33, 405.33, 405.33, 405.32, 405.32, 405.33, 405.32, 405.33], "total": 4958.46, "media": 413.2}, {"id": "280", "nome": "Anestesia Niteroi Servicos Medicos", "meses": [904.62, 987.81, 1114.04, 1265.01, 1015.54, 1166.51, 1030.64, 1015.54, 1015.55, 1166.67, 1166.51, 1030.64], "total": 12879.08, "media": 1073.26}, {"id": "281", "nome": "Rl Angiologia E Cirurgia Vascular Ltda", "meses": [435.51, 405.32, 435.51, 435.51, 435.51, 405.32, 601.58, 435.51, 450.61, 435.51, 435.51, 435.51], "total": 5346.91, "media": 445.58}, {"id": "283", "nome": "Eliane Lima Barreto", "meses": [246.82, 246.82, 246.82, 246.82, 246.82, 246.83, 246.82, 246.82, 246.82, 258.95, 246.84, 246.82], "total": 2974.0, "media": 247.83}, {"id": "284", "nome": "Clinica G&o Saude Da Mulher", "meses": [1116.34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1116.34, "media": 1116.34}, {"id": "286", "nome": "Mel Adm E Gestao Ltda", "meses": [0, 0, 0, 0, 0, 1722.8, 1722.87, 0, 0, 0, 0, 1218.34], "total": 4664.01, "media": 1554.67}, {"id": "287", "nome": "Rayana Lima Odontologia Ltda", "meses": [654.79, 752.55, 651.81, 586.48, 586.48, 752.55, 752.55, 571.39, 1021.67, 1085.8, 919.73, 1085.8], "total": 9421.6, "media": 785.13}, {"id": "291", "nome": "Citriniti Odontologia Ltda", "meses": [782.76, 903.52, 903.52, 752.55, 1054.49, 903.53, 903.52, 1054.49, 933.72, 903.52, 918.62, 1084.68], "total": 11098.92, "media": 924.91}, {"id": "292", "nome": "Priscilla Resende Saude Mental E Consultoria Ltda", "meses": [405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32], "total": 4863.84, "media": 405.32}, {"id": "297", "nome": "Sport Physio Clinica De Terapia Do Corpo Ltda", "meses": [745.59, 980.2, 730.92, 730.92, 730.92, 730.92, 0, 877.56, 877.56, 877.56, 877.56, 877.56], "total": 9037.27, "media": 821.57}, {"id": "299", "nome": "Aricya Felix", "meses": [246.84, 246.83, 246.83, 246.82, 246.84, 246.82, 246.83, 246.83, 246.82, 246.83, 246.83, 246.83], "total": 2961.95, "media": 246.83}, {"id": "301", "nome": "Oncosurg Medicos Associados", "meses": [1206.56, 1055.59, 1055.59, 1357.53, 1221.66, 1055.59, 904.62, 456.24, 456.24, 0, 0, 0], "total": 8769.62, "media": 974.4}, {"id": "302", "nome": "Sophia E Fernandes Servicos Medicos", "meses": [753.65, 587.58, 753.65, 753.65, 753.65, 753.65, 904.62, 753.65, 587.58, 753.65, 904.62, 753.65], "total": 9013.6, "media": 751.13}, {"id": "305", "nome": "Vitally Med", "meses": [405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32, 405.32], "total": 4863.84, "media": 405.32}, {"id": "307", "nome": "Lorbe Serviços Médicos", "meses": [525.32, 435.51, 601.58, 435.51, 601.58, 752.55, 601.58, 601.58, 601.58, 752.55, 601.58, 601.58], "total": 7112.5, "media": 592.71}, {"id": "308", "nome": "Marcelo Domingues Pinto", "meses": [123.42, 123.71, 123.42, 123.17, 133.22, 123.42, 123.42, 123.42, 123.43, 0, 0, 0], "total": 1120.63, "media": 124.51}, {"id": "309", "nome": "Cedt Radiologia Odontologica Ltda", "meses": [1995.9, 2131.77, 1980.8, 2131.77, 2131.77, 2131.77, 2131.77, 2131.77, 2131.77, 2131.77, 2131.77, 1980.8], "total": 25143.43, "media": 2095.29}, {"id": "313", "nome": "Elisa Goulart Rebelo Pinheiro", "meses": [592.58, 592.58, 592.58, 592.58, 592.58, 592.62, 592.58, 592.58, 592.58, 592.58, 592.58, 592.59], "total": 7111.01, "media": 592.58}, {"id": "317", "nome": "Marques E Brito Sociedade De Advogados", "meses": [352.86, 379.3, 1053.29, 537.88, 537.88, 352.86, 379.3, 656.82, 788.98, 524.67, 352.86, 379.3], "total": 6296.0, "media": 524.67}, {"id": "319", "nome": "Espaco Fisio Clarear", "meses": [405.3, 405.3, 405.3, 435.49, 405.3, 0, 405.3, 405.3, 435.49, 405.3, 405.3, 752.53], "total": 4865.91, "media": 442.36}, {"id": "323", "nome": "Asfisio - Fisioterapia E Artigos Ortopedicos Ltda", "meses": [423.0, 393.67, 423.0, 599.29, 423.0, 408.01, 423.0, 423.0, 423.0, 453.0, 393.67, 423.0], "total": 5208.64, "media": 434.05}, {"id": "326", "nome": "Clinica Ortosan Ltda", "meses": [707.26, 707.26, 737.45, 707.26, 707.26, 707.26, 0, 1414.52, 556.29, 0, 1444.71, 707.26], "total": 8396.53, "media": 839.65}, {"id": "327", "nome": "Koenow E Associados", "meses": [673.05, 574.54, 554.05, 620.35, 630.36, 620.35, 598.25, 598.25, 598.62, 598.41, 598.25, 598.25], "total": 7262.73, "media": 605.23}, {"id": "328", "nome": "Aline Mattos Luiz Consultório Odontológico Ltda", "meses": [295.43, 295.43, 295.43, 295.43, 393.67, 393.67, 393.67, 393.67, 393.67, 656.0, 557.8, 557.76], "total": 4921.63, "media": 410.14}, {"id": "334", "nome": "Andrade & Bianchini Arqueologia E Patrimonio", "meses": [435.51, 405.32, 304.17, 435.51, 405.32, 304.17, 405.32, 435.51, 405.32, 435.51, 435.51, 304.17], "total": 4711.34, "media": 392.61}, {"id": "339", "nome": "Espaço Amar De Saúde Ltda", "meses": [689.02, 689.02, 689.02, 745.59, 519.02, 660.44, 688.73, 660.44, 674.59, 660.44, 816.01, 844.3], "total": 8336.62, "media": 694.72}, {"id": "340", "nome": "Krinon Saude E Desenvolvimento", "meses": [405.32, 435.51, 405.32, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 435.51, 601.58], "total": 5331.81, "media": 444.32}, {"id": "343", "nome": "Doral Wireless Ltda", "meses": [500.44, 455.14, 334.36, 304.18, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17, 304.17], "total": 4027.48, "media": 335.62}, {"id": "344", "nome": "Roxana Flores Mamani Ltda", "meses": [304.17, 304.17, 405.32, 435.51, 405.32, 435.51, 435.51, 435.51, 405.32, 435.51, 435.51, 405.31], "total": 4842.67, "media": 403.56}, {"id": "346", "nome": "Dr Evaldir Da Silva Gandur Filho", "meses": [416.67, 246.82, 331.75, 307.48, 368.14, 271.08, 271.08, 368.14, 368.14, 368.14, 368.14, 368.14], "total": 4053.72, "media": 337.81}, {"id": "348", "nome": "Daniel Damasceno Junior Clinica Medica Ltda", "meses": [405.32, 405.32, 405.32, 304.17, 405.32, 435.51, 405.32, 405.32, 405.32, 405.32, 304.17, 435.51], "total": 4721.92, "media": 393.49}, {"id": "352", "nome": "Odontologia Mad V Ltda", "meses": [6902.56, 6339.72, 4376.68, 5354.49, 5782.87, 5330.03, 5175.06, 0, 0, 0, 0, 10187.61], "total": 49449.02, "media": 6181.13}, {"id": "353", "nome": "Pezoti Leite Odontologia Ltda", "meses": [1396.79, 1328.8, 1410.39, 1464.79, 1464.79, 1965.11, 1829.12, 1883.52, 1630.12, 1630.12, 1609.63, 1158.72], "total": 18771.9, "media": 1564.33}, {"id": "356", "nome": "Treinamento Corporativo Em Desenvolvimento Profissional E Gerencial", "meses": [560.37, 551.63, 539.88, 539.88, 539.9, 539.88, 539.88, 539.96, 539.88, 539.93, 539.88, 539.88], "total": 6510.95, "media": 542.58}, {"id": "357", "nome": "Rainha Da Noite Comercio De Artigos Artesanais E Varejistas Ltda", "meses": [405.33, 413.82, 405.32, 405.46, 317.0, 317.0, 318.08, 364.78, 405.32, 405.33, 405.32, 304.17], "total": 4466.93, "media": 372.24}, {"id": "358", "nome": "Dentsilva Odontologia Ltda", "meses": [586.48, 586.48, 586.48, 601.59, 0, 0, 0, 0, 0, 0, 547.02, 547.02], "total": 3455.07, "media": 575.85}, {"id": "364", "nome": "Rodrigo Macedo Janke", "meses": [246.91, 246.83, 246.83, 246.83, 246.83, 246.83, 246.83, 246.83, 246.83, 246.83, 246.82, 246.83], "total": 2962.03, "media": 246.84}, {"id": "365", "nome": "Centro De Estudos Imaizumi Eireli", "meses": [0, 557.39, 557.4, 557.4, 557.4, 557.4, 557.4, 557.4, 557.39, 557.4, 557.39, 0], "total": 5573.97, "media": 557.4}, {"id": "368", "nome": "Dra Joyce Melo Odontologia, Estetica & Beauty", "meses": [0, 567.21, 665.7, 691.47, 641.17, 592.12, 450.15, 178.62, 227.05, 376.37, 0, 539.87], "total": 4929.73, "media": 492.97}, {"id": "370", "nome": "Fengsoft Servicos Em Tecnologia E Educacao Ltda", "meses": [752.55, 752.55, 435.51, 1069.58, 752.55, 752.55, 435.51, 903.52, 752.55, 752.55, 752.55, 767.65], "total": 8879.62, "media": 739.97}, {"id": "373", "nome": "Cylu Cirurgias", "meses": [753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65, 753.65], "total": 9043.8, "media": 753.65}, {"id": "375", "nome": "D&f Pro Saude", "meses": [1227.05, 1076.08, 925.11, 955.3, 925.11, 925.12, 925.12, 940.21, 925.11, 0, 0, 0], "total": 8824.21, "media": 980.47}, {"id": "380", "nome": "Sh Microbiologia Ltda", "meses": [363.09, 363.09, 363.09, 271.98, 363.09, 363.09, 285.58, 271.98, 363.09, 363.09, 363.09, 363.09], "total": 4097.35, "media": 341.45}, {"id": "382", "nome": "Thec Solution", "meses": [0, 0, 600.0, 427.16, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1027.16, "media": 513.58}, {"id": "383", "nome": "Clinica Psique & Bem Estar", "meses": [0, 0, 0, 0, 350.0, 235.54, 0, 235.55, 0, 0, 0, 123.33], "total": 944.42, "media": 236.1}, {"id": "385", "nome": "Marcelo Veloso Peixoto", "meses": [246.82, 246.82, 246.82, 271.09, 246.82, 246.82, 246.82, 246.83, 246.82, 246.82, 246.82, 258.95], "total": 2998.25, "media": 249.85}, {"id": "388", "nome": "Rorrj - Radiologia Odontologica", "meses": [767.5, 767.5, 0, 892.34, 892.34, 892.34, 892.34, 892.34, 892.34, 892.34, 767.5, 767.5], "total": 9316.38, "media": 846.94}, {"id": "389", "nome": "Rubens Raymundo Junior", "meses": [600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17, 600.17], "total": 7202.04, "media": 600.17}, {"id": "390", "nome": "Singularidade Psicologia E Psicanalise Ltda", "meses": [363.09, 390.29, 390.29, 390.29, 390.29, 403.91, 376.7, 363.09, 390.29, 390.29, 363.09, 390.29], "total": 4601.91, "media": 383.49}, {"id": "391", "nome": "Ruan Ribeiro De Oliveira", "meses": [657.24, 657.24, 511.82, 789.48, 789.48, 921.73, 776.26, 921.73, 940.46, 1186.22, 1053.97, 1053.97], "total": 10259.6, "media": 854.97}, {"id": "392", "nome": "Brenda Lisboa Tenório Me", "meses": [396.72, 485.32, 511.77, 485.32, 511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 205.55], "total": 5667.07, "media": 472.26}, {"id": "393", "nome": "Yessa Moda E Estilo Ltda", "meses": [511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 511.77, 396.72, 525.0, 396.72], "total": 5924.37, "media": 493.7}, {"id": "395", "nome": "Pegado Rio Dentistas Associados Ltda", "meses": [907.05, 907.05, 499.08, 526.28, 499.08, 526.28, 499.08, 526.28, 526.28, 407.97, 407.97, 407.97], "total": 6640.37, "media": 553.36}, {"id": "397", "nome": "Juliana Lima De Jesus Camello", "meses": [311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 622.34], "total": 4045.21, "media": 337.1}, {"id": "398", "nome": "Goncalves Diaz Clinica Da Face", "meses": [835.01, 951.25, 970.88, 1102.22, 1270.23, 1119.26, 923.01, 953.19, 0, 1119.26, 1119.26, 923.0], "total": 11286.57, "media": 1026.05}, {"id": "401", "nome": "Ejcs Treinamentos E Solucoes Ltda", "meses": [363.11, 363.09, 285.58, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1011.78, "media": 337.26}, {"id": "402", "nome": "R.b. Procedimentos Odontologicos Ltda", "meses": [877.27, 780.59, 995.59, 1450.65, 1450.65, 1461.67, 1450.65, 1242.85, 984.43, 786.35, 796.99, 475.13], "total": 12752.82, "media": 1062.73}, {"id": "403", "nome": "Bucalle Odontologia Humanizada", "meses": [0, 0, 0, 1642.59, 0, 0, 2000.0, 0, 0, 0, 0, 1500.0], "total": 5142.59, "media": 1714.2}, {"id": "405", "nome": "Consultorio Dr. Victor Figueiredo Ltda", "meses": [264.32, 264.34, 366.08, 352.86, 352.88, 352.88, 352.88, 352.9, 352.91, 352.99, 379.4, 0], "total": 3744.44, "media": 340.4}, {"id": "408", "nome": "Smart Kon Elevadores Ltda", "meses": [1728.03, 1728.03, 1728.03, 2000.01, 1728.03, 2136.0, 2068.0, 1320.06, 2271.99, 2543.96, 4039.84, 3903.85], "total": 27195.83, "media": 2266.32}, {"id": "410", "nome": "Albernaz Odontologia", "meses": [0, 0, 1703.3, 1225.75, 1225.77, 1225.75, 992.31, 0, 0, 0, 0, 0], "total": 6372.88, "media": 1274.58}, {"id": "413", "nome": "Health For Life Consultas Medicas Ltda", "meses": [694.91, 675.86, 675.86, 675.86, 700.83, 700.83, 551.24, 700.83, 700.83, 700.83, 700.83, 649.74], "total": 8128.45, "media": 677.37}, {"id": "414", "nome": "Aparecida Empresarial Odontologia Eireli", "meses": [0, 1040.32, 0, 1079.69, 1492.43, 1307.58, 1351.6, 1329.56, 298.32, 0, 0, 1000.0], "total": 8899.5, "media": 1112.44}, {"id": "415", "nome": "Osman Comercio De Pelucia Ltda", "meses": [621.55, 621.55, 1014.39, 908.52, 815.95, 621.55, 1014.31, 621.55, 908.52, 648.0, 958.05, 1080.43], "total": 9834.37, "media": 819.53}, {"id": "416", "nome": "Lidera Odontologia Ltda", "meses": [656.82, 788.98, 656.82, 788.98, 656.82, 0, 788.98, 921.15, 921.14, 0, 921.14, 921.14], "total": 8021.97, "media": 802.2}, {"id": "417", "nome": "Faceorto - Clinica Dra. Sandra Vicente Ltda", "meses": [341.62, 478.68, 0, 478.9, 0, 0, 1302.42, 775.22, 802.42, 760.01, 451.48, 900.25], "total": 6291.0, "media": 699.0}, {"id": "419", "nome": "Le Vivare Odontologia E Bem Estar Ltda", "meses": [858.1, 771.06, 771.06, 798.26, 798.26, 771.06, 771.06, 771.06, 907.05, 1111.03, 934.25, 934.24], "total": 10196.49, "media": 849.71}, {"id": "422", "nome": "Reference Clinica Odontologica", "meses": [510.43, 884.95, 884.95, 760.11, 760.11, 760.11, 884.95, 760.11, 909.92, 884.95, 884.95, 884.95], "total": 9770.49, "media": 814.21}, {"id": "423", "nome": "Fap Care Freguesia Clinica Odontologica Ltda", "meses": [811.86, 526.28, 675.87, 811.86, 811.86, 811.86, 811.86, 811.87, 811.86, 675.87, 811.86, 675.87], "total": 9048.78, "media": 754.07}, {"id": "424", "nome": "Adrivan Machado Henrique Ltda", "meses": [224.72, 300.0, 211.46, 300.0, 300.0, 300.24, 300.11, 300.0, 300.11, 300.0, 0, 0], "total": 2836.64, "media": 283.66}, {"id": "425", "nome": "Amanda Pizzolato Odontologia Ltda", "meses": [413.47, 386.27, 549.48, 726.24, 724.38, 883.78, 572.65, 586.24, 563.06, 712.65, 526.28, 526.28], "total": 7170.78, "media": 597.56}, {"id": "426", "nome": "Dra Bárbara Oliveira Franco", "meses": [177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85, 177.85], "total": 2134.2, "media": 177.85}, {"id": "427", "nome": "Ideal Design Ltda", "meses": [0, 0, 573.24, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 573.24, "media": 573.24}, {"id": "428", "nome": "Proface Servicos Odontologicos Ltda", "meses": [272.24, 271.98, 285.58, 271.98, 312.78, 285.58, 407.97, 407.97, 407.97, 407.97, 407.97, 407.97], "total": 4147.96, "media": 345.66}, {"id": "429", "nome": "Rosatti Clinica Odontologica Ltda", "meses": [539.88, 539.88, 403.89, 390.29, 553.48, 539.88, 567.08, 390.33, 539.92, 553.48, 390.3, 390.31], "total": 5798.72, "media": 483.23}, {"id": "430", "nome": "Megadent Serviços Odontológicos S C Ltda", "meses": [977.55, 987.44, 987.44, 1113.59, 1127.13, 1103.63, 1103.63, 1103.63, 1239.62, 1239.62, 1239.62, 1229.72], "total": 13452.62, "media": 1121.05}, {"id": "431", "nome": "Vanessa De Oliveira Albernaz", "meses": [310.6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 310.6, "media": 310.6}, {"id": "432", "nome": "Diogo Alves Da Conceicao", "meses": [310.06, 310.06, 310.06, 310.06, 321.58, 310.06, 310.06, 310.06, 310.06, 310.06, 310.06, 620.12], "total": 4042.3, "media": 336.86}, {"id": "433", "nome": "Helen Pedrenho", "meses": [214.63, 214.63, 214.63, 214.63, 224.53, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63], "total": 2585.46, "media": 215.46}, {"id": "434", "nome": "Pet Hotel Pendotiba", "meses": [155.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 155.03, "media": 155.03}, {"id": "435", "nome": "Instituto Rafael Merola", "meses": [666.73, 509.19, 628.76, 653.87, 761.7, 709.23, 600.03, 530.46, 809.3, 687.98, 687.98, 809.07], "total": 8054.3, "media": 671.19}, {"id": "436", "nome": "Nova Implanto", "meses": [1104.32, 1104.32, 1104.32, 1240.31, 1240.31, 1104.32, 1240.31, 1690.31, 1890.31, 1440.31, 1576.4, 1440.31], "total": 16175.85, "media": 1347.99}, {"id": "443", "nome": "Pro Colon Servicos Medicos Ltda", "meses": [553.48, 675.87, 407.97, 675.87, 539.88, 526.3, 539.88, 539.88, 675.87, 675.87, 499.08, 1172.87], "total": 7482.82, "media": 623.57}, {"id": "444", "nome": "Paula Alves Da Conceição", "meses": [192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07, 192.07], "total": 2304.84, "media": 192.07}, {"id": "445", "nome": "Camila Araújo", "meses": [214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63], "total": 2575.56, "media": 214.63}, {"id": "449", "nome": "Dra Flávia Ramos Bello", "meses": [599.83, 599.83, 599.83, 599.83, 599.83, 599.83, 599.83, 599.83, 599.83, 599.85, 599.83, 599.83], "total": 7197.98, "media": 599.83}, {"id": "450", "nome": "Flavia R Bello Servicos Medicos Ltda", "meses": [658.07, 780.46, 780.46, 780.46, 780.46, 780.46, 780.46, 780.46, 780.46, 644.49, 780.46, 644.47], "total": 8971.17, "media": 747.6}, {"id": "451", "nome": "Ferrato Pires Odontologia Ltda", "meses": [635.07, 635.07, 662.27, 662.27, 526.28, 553.48, 526.28, 526.28, 675.87, 675.87, 526.28, 675.88], "total": 7280.9, "media": 606.74}, {"id": "452", "nome": "Mental Health Serviços Medicos E Psicologicos Ltda", "meses": [363.09, 390.29, 390.29, 390.29, 390.29, 363.09, 390.29, 390.29, 390.29, 363.09, 363.09, 390.29], "total": 4574.68, "media": 381.22}, {"id": "456", "nome": "Laborlife Diagnosticos", "meses": [2380.64, 2285.44, 2421.43, 2353.44, 2353.44, 2353.44, 2489.43, 2421.43, 2421.43, 2421.43, 2421.43, 2421.43], "total": 28744.41, "media": 2395.37}, {"id": "458", "nome": "Samantha Mayumi Morimoto Do Amaral", "meses": [269.13, 269.13, 269.13, 269.13, 269.13, 269.13, 0, 538.26, 269.13, 0, 538.26, 538.26], "total": 3498.69, "media": 349.87}, {"id": "459", "nome": "Dra Tatiana Ramos Odontologia Integrativa Ltda", "meses": [271.98, 271.98, 408.4, 526.28, 526.28, 435.18, 499.18, 407.97, 421.96, 408.39, 499.08, 407.96], "total": 5084.64, "media": 423.72}, {"id": "461", "nome": "Mariana Pereira Da Silva Leal", "meses": [214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63, 214.63], "total": 2575.56, "media": 214.63}, {"id": "462", "nome": "Fashion Arth Comercial Ltda", "meses": [507.61, 393.82, 382.15, 448.75, 371.06, 393.82, 428.89, 370.45, 370.45, 370.47, 370.46, 382.14], "total": 4790.07, "media": 399.17}, {"id": "463", "nome": "Vem Sorrir Odontologia", "meses": [511.45, 504.41, 590.16, 744.27, 620.13, 645.77, 620.08, 718.57, 718.66, 645.9, 620.08, 787.14], "total": 7726.62, "media": 643.88}, {"id": "465", "nome": "Blackman Odontologia Ltda", "meses": [0, 271.98, 390.3, 417.49, 417.49, 539.88, 390.29, 390.29, 580.67, 363.09, 403.89, 539.88], "total": 4705.25, "media": 427.75}, {"id": "466", "nome": "Lef Solucoes Expressas Em Saude Ltda", "meses": [341.95, 341.95, 428.26, 341.96, 428.25, 428.25, 363.53, 341.95, 341.96, 428.26, 428.25, 809.43], "total": 5024.0, "media": 418.67}, {"id": "467", "nome": "Md Diagnostico Por Imagem Ltda", "meses": [1695.78, 1695.78, 1695.78, 675.87, 1695.78, 1695.78, 1695.78, 1695.78, 1695.78, 1695.78, 1695.78, 1695.78], "total": 19329.45, "media": 1610.79}, {"id": "468", "nome": "Cse Ginecologia E Obstetricia", "meses": [421.57, 499.08, 539.88, 689.49, 376.82, 271.98, 363.1, 271.98, 271.99, 271.98, 271.98, 272.0], "total": 4521.85, "media": 376.82}, {"id": "469", "nome": "Jaqueline Cristina Lira De Lima", "meses": [276.19, 275.23, 275.23, 275.32, 275.23, 275.23, 275.23, 275.23, 275.23, 275.23, 275.23, 275.23], "total": 3303.81, "media": 275.32}, {"id": "471", "nome": "Integralodonto Consultório Odontológico Ltda", "meses": [675.87, 675.87, 526.28, 539.89, 675.87, 675.87, 675.87, 675.87, 689.47, 811.86, 675.87, 825.45], "total": 8124.04, "media": 677.0}, {"id": "474", "nome": "Med Servicos Medicos Ltda", "meses": [1514.24, 1514.24, 1737.58, 1737.58, 1639.08, 1783.82, 1534.14, 1783.82, 1783.82, 1763.93, 2013.61, 1888.62], "total": 20694.48, "media": 1724.54}, {"id": "475", "nome": "Esteves & Nascimento Servicos Medicos Ltda", "meses": [390.29, 390.29, 390.29, 403.91, 390.3, 390.31, 390.31, 390.29, 390.29, 390.29, 390.34, 390.34], "total": 4697.25, "media": 391.44}, {"id": "477", "nome": "Odontobarbara", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 915.0], "total": 5947.5, "media": 495.62}, {"id": "480", "nome": "Lima Duarte Estética Ltda", "meses": [1218.73, 1218.73, 1070.23, 390.29, 1138.23, 1070.23, 1070.23, 1287.82, 1287.82, 1287.82, 0, 0], "total": 11040.13, "media": 1104.01}, {"id": "481", "nome": "Clínica Claramente Ltda", "meses": [271.98, 271.98, 271.98, 271.98, 271.98, 271.98, 272.27, 271.98, 271.98, 271.98, 271.98, 271.98], "total": 3264.05, "media": 272.0}, {"id": "482", "nome": "Caju Company Ltda", "meses": [250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22, 250.22], "total": 3002.64, "media": 250.22}, {"id": "484", "nome": "Campos & Cutrim Serviços Médicos Ltda", "meses": [390.29, 675.87, 539.88, 675.87, 539.88, 539.88, 539.88, 675.87, 539.88, 539.88, 539.88, 539.88], "total": 6736.94, "media": 561.41}, {"id": "485", "nome": "Ds Odontologia Ltda", "meses": [635.32, 546.72, 546.72, 485.32, 406.63, 485.32, 577.9, 396.72, 396.72, 396.72, 396.72, 485.32], "total": 5756.13, "media": 479.68}, {"id": "486", "nome": "Dra Simone Lima", "meses": [272.11, 271.98, 271.99, 271.99, 271.98, 271.99, 281.99, 271.99, 271.99, 271.99, 271.98, 272.0], "total": 3273.98, "media": 272.83}, {"id": "487", "nome": "Carolina Galeano Pediatria", "meses": [727.28, 644.02, 644.02, 511.77, 644.02, 789.48, 644.02, 644.02, 644.02, 644.02, 644.02, 617.57], "total": 7798.26, "media": 649.86}, {"id": "488", "nome": "Lopes & Minarini Business Ltda", "meses": [249.69, 249.69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 499.38, "media": 249.69}, {"id": "492", "nome": "Santoro E Correa", "meses": [753.81, 796.97, 823.42, 664.72, 796.97, 617.57, 630.79, 617.57, 630.79, 617.57, 617.57, 617.57], "total": 8185.32, "media": 682.11}, {"id": "493", "nome": "Ewbank Servicos Medicos", "meses": [376.69, 390.29, 403.89, 0, 390.29, 390.29, 0, 539.88, 539.88, 675.87, 390.29, 553.48], "total": 4650.85, "media": 465.09}, {"id": "494", "nome": "Grazing Food Niteroi", "meses": [519.65, 617.57, 568.64, 396.72, 617.57, 528.96, 411.73, 396.72, 485.32, 396.72, 396.72, 423.17], "total": 5759.49, "media": 479.96}, {"id": "495", "nome": "Conserte", "meses": [407.97, 407.97, 285.58, 271.98, 271.98, 0, 0, 0, 0, 0, 0, 0], "total": 1645.48, "media": 329.1}, {"id": "496", "nome": "Luana Lopes Yoga", "meses": [271.98, 363.09, 363.09, 271.98, 271.98, 363.09, 363.09, 271.98, 271.98, 271.98, 271.98, 285.58], "total": 3641.8, "media": 303.48}, {"id": "501", "nome": "Oncologia Sem Medo", "meses": [728.76, 728.76, 728.76, 740.97, 728.76, 728.77, 740.97, 728.76, 728.76, 728.76, 728.76, 1457.52], "total": 9498.31, "media": 791.53}, {"id": "502", "nome": "Clinica Camila Caruso Psicologia E Saude Ltda", "meses": [484.62, 484.62, 484.62, 484.62, 484.62, 325.93, 484.62, 484.62, 484.62, 484.62, 484.62, 954.81], "total": 6126.94, "media": 510.58}, {"id": "505", "nome": "Osman Three Comercio De Pelucias Ltda", "meses": [390.34, 390.34, 390.34, 390.34, 390.34, 390.34, 390.34, 405.43, 0, 0, 0, 0], "total": 3137.81, "media": 392.23}, {"id": "507", "nome": "Ortozara", "meses": [969.56, 813.06, 711.59, 561.78, 624.2, 624.2, 0, 1545.53, 670.39, 561.78, 624.22, 624.35], "total": 8330.66, "media": 757.33}, {"id": "508", "nome": "Clinica Ilodonto", "meses": [573.02, 375.47, 561.78, 624.2, 561.78, 561.78, 0, 1453.14, 561.78, 645.42, 670.4, 670.4], "total": 7259.17, "media": 659.92}, {"id": "512", "nome": "Vitality Saude", "meses": [484.62, 509.04, 496.9, 496.84, 496.84, 496.84, 496.84, 496.84, 496.84, 496.84, 496.84, 969.24], "total": 6434.52, "media": 536.21}, {"id": "513", "nome": "Titanio Participacoes Ltda", "meses": [602.98, 651.51, 602.98, 602.98, 602.98, 0, 0, 0, 0, 0, 0, 0], "total": 3063.43, "media": 612.69}, {"id": "514", "nome": "Condominio Do Edificio Rolland Garrot", "meses": [1152.38, 1163.9, 1152.38, 576.19, 1152.38, 1751.62, 1187.99, 1152.38, 1152.38, 1152.38, 1152.38, 2306.86], "total": 15053.22, "media": 1254.44}, {"id": "515", "nome": "Bianca Menezes Marques", "meses": [979.11, 902.09, 1072.99, 780.02, 902.09, 902.09, 1158.44, 914.3, 1144.77, 1144.77, 1036.37, 2000.85], "total": 12937.89, "media": 1078.16}, {"id": "516", "nome": "Pereira E Cortes Servicos Medicos E Odontologicos Ltda", "meses": [703.62, 703.62, 715.83, 581.55, 703.62, 703.62, 703.62, 996.59, 703.62, 703.62, 996.59, 1450.52], "total": 9666.42, "media": 805.53}, {"id": "517", "nome": "Acs Medicina Especializada", "meses": [1332.6, 1332.6, 1332.6, 1217.36, 1332.6, 1056.03, 1332.6, 1609.17, 1332.6, 1609.17, 1332.6, 2679.88], "total": 17499.81, "media": 1458.32}, {"id": "519", "nome": "Bonifacio Simonato E Stoterau Sociedade De Advogados", "meses": [590.98, 441.17, 590.98, 475.74, 441.17, 325.93, 325.93, 475.85, 325.93, 325.95, 326.08, 750.19], "total": 5395.9, "media": 449.66}, {"id": "520", "nome": "Suéle Mélo Quinellato Leite", "meses": [589.26, 589.26, 589.26, 589.26, 589.26, 589.27, 589.26, 589.26, 589.26, 589.26, 589.27, 1178.53], "total": 7660.41, "media": 638.37}, {"id": "524", "nome": "Bianca Tavares Pediatria", "meses": [647.17, 411.74, 411.74, 411.74, 411.74, 411.74, 423.26, 423.26, 411.74, 446.31, 434.79, 843.07], "total": 5688.3, "media": 474.03}, {"id": "526", "nome": "Ono", "meses": [1529.47, 1130.93, 1130.9, 1130.91, 871.2, 848.26, 848.26, 821.82, 963.5, 1183.43, 986.43, 1845.23], "total": 13290.34, "media": 1107.53}, {"id": "527", "nome": "Dinaete Silva Bastos", "meses": [172.98, 172.99, 161.82, 172.98, 150.63, 150.58, 150.58, 150.58, 150.58, 0, 0, 0], "total": 1433.72, "media": 159.3}, {"id": "528", "nome": "Reiks Consultoria E Negocios Imobiliarios Ltda", "meses": [457.5, 307.69, 457.5, 307.69, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1530.38, "media": 382.6}, {"id": "530", "nome": "Ffbcampanario Servicos Medicos", "meses": [457.51, 457.5, 469.02, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 926.51], "total": 5970.54, "media": 497.55}, {"id": "531", "nome": "Maicodonto", "meses": [779.47, 1056.04, 1056.04, 779.47, 1056.04, 940.8, 825.56, 1056.04, 1056.04, 1056.04, 1056.04, 2030.36], "total": 12747.94, "media": 1062.33}, {"id": "532", "nome": "Roberto Rolim Sociedade Individual De Advocacia", "meses": [307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 615.37], "total": 3999.96, "media": 333.33}, {"id": "533", "nome": "Rayara Aoki", "meses": [0, 0, 162.98, 162.98, 162.98, 162.98, 162.98, 162.98, 0, 0, 0, 0], "total": 977.88, "media": 162.98}, {"id": "534", "nome": "Claudia Maria De Barros Fernandes Domingues", "meses": [367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0], "total": 4404.0, "media": 367.0}, {"id": "535", "nome": "Savaget Assessoria E Consultoria Empresarial Ltda", "meses": [596.12, 596.12, 596.12, 596.12, 596.17, 596.12, 596.12, 596.15, 596.12, 596.12, 480.89, 1066.53], "total": 7508.7, "media": 625.73}, {"id": "537", "nome": "Fábio Alexandre Goulart Martins", "meses": [455.54, 444.35, 444.35, 444.35, 444.35, 444.35, 444.35, 444.35, 444.35, 444.35, 444.35, 888.72], "total": 5787.76, "media": 482.31}, {"id": "539", "nome": "Alt Consultoria", "meses": [342.28, 342.26, 354.74, 342.26, 341.56, 0, 529.52, 342.26, 354.74, 342.26, 379.71, 342.3], "total": 4013.89, "media": 364.9}, {"id": "540", "nome": "Rayna Araujo Tecnologia", "meses": [266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 532.88], "total": 3463.72, "media": 288.64}, {"id": "541", "nome": "Itala Nogueira Sociedade Individual De Advocacia", "meses": [457.5, 457.5, 918.45, 457.5, 457.5, 457.5, 457.5, 480.55, 457.5, 687.97, 457.5, 977.85], "total": 6724.82, "media": 560.4}, {"id": "542", "nome": "Firefighters", "meses": [2647.41, 2877.87, 2531.99, 0, 0, 0, 0, 1068.73, 1068.72, 0, 0, 500.0], "total": 10694.72, "media": 1782.45}, {"id": "543", "nome": "Reabrink", "meses": [1271.77, 1548.34, 1582.91, 1824.91, 1824.92, 1859.48, 1824.91, 1824.91, 1921.71, 1921.71, 1921.71, 4082.47], "total": 23409.75, "media": 1950.81}, {"id": "544", "nome": "Bem Estar E Saude", "meses": [411.01, 411.02, 411.01, 411.01, 411.01, 0, 0, 0, 0, 0, 0, 0], "total": 2055.06, "media": 411.01}, {"id": "545", "nome": "Figo & Teixo Garden Center", "meses": [849.31, 870.98, 870.9, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 2591.19, "media": 863.73}, {"id": "546", "nome": "Clinica De Psicologia Gratitude", "meses": [549.0, 549.0, 560.52, 549.0, 549.0, 549.0, 825.57, 825.57, 825.57, 825.57, 825.57, 1500.27], "total": 8933.64, "media": 744.47}, {"id": "547", "nome": "Priscilla Da Silva Carneiro", "meses": [500.65, 500.69, 500.72, 500.66, 500.69, 500.64, 556.62, 500.64, 500.66, 500.64, 500.68, 1001.28], "total": 6564.57, "media": 547.05}, {"id": "548", "nome": "Instituto Ellen Bundzman", "meses": [0, 0, 767.84, 594.75, 595.54, 594.74, 594.76, 594.74, 607.22, 718.21, 693.34, 594.74], "total": 6355.88, "media": 635.59}, {"id": "550", "nome": "Irma Paula Odontopediatria", "meses": [2565.98, 2554.45, 2831.02, 2554.45, 2822.68, 2831.02, 2567.15, 2554.45, 2565.97, 2681.2, 2715.79, 3550.77], "total": 32794.93, "media": 2732.91}, {"id": "554", "nome": "Glaucoma Academy Ltda", "meses": [342.26, 457.5, 342.26, 353.78, 342.26, 515.12, 342.26, 399.88, 365.31, 422.94, 342.26, 778.8], "total": 5004.63, "media": 417.05}, {"id": "555", "nome": "Zeeman Servicos De Radioterapia Ltda", "meses": [1494.64, 1494.64, 1494.64, 1494.64, 1494.64, 2286.3, 2516.78, 2516.78, 2516.78, 2516.78, 2516.78, 4116.17], "total": 26459.57, "media": 2204.96}, {"id": "556", "nome": "Orbital Consultoria E Educacao Em Fisica Medica Ltda", "meses": [399.88, 399.88, 399.88, 399.88, 399.88, 399.88, 342.26, 599.24, 0, 0, 0, 0], "total": 3340.78, "media": 417.6}, {"id": "557", "nome": "Conserte", "meses": [271.98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 271.98, "media": 271.98}, {"id": "559", "nome": "Nucleo De Integralizacao Humana", "meses": [597.81, 618.56, 597.81, 597.91, 597.83, 608.18, 597.81, 921.25, 0, 0, 0, 0], "total": 5137.16, "media": 642.14}, {"id": "560", "nome": "Ana Sierra Consultoria Em Cardio Clinica Med Esportiva", "meses": [1048.22, 778.56, 778.56, 647.68, 0, 647.62, 863.5, 647.62, 863.49, 834.46, 647.62, 917.28], "total": 8674.61, "media": 788.6}, {"id": "562", "nome": "Clinica Odontologica Dr. Renan Salgado Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0], "total": 1268.0, "media": 317.0}, {"id": "567", "nome": "Clinica Lavatori, Terapias Medicas Personalizadas Ltda", "meses": [457.49, 457.49, 457.49, 457.5, 457.49, 457.5, 469.01, 457.49, 469.01, 457.49, 469.02, 918.12], "total": 5985.1, "media": 498.76}, {"id": "568", "nome": "Reis & Sarzeda Participacoes Ltda", "meses": [342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 684.52], "total": 4449.38, "media": 370.78}, {"id": "569", "nome": "Escola De Propriedade Intelectual", "meses": [363.54, 363.54, 363.54, 363.54, 363.54, 375.06, 386.59, 375.06, 363.54, 363.54, 363.54, 707.57], "total": 4752.6, "media": 396.05}, {"id": "570", "nome": "Gonzalez E Amaral Servicos Medicos Ltda", "meses": [595.79, 780.18, 572.76, 572.74, 572.73, 745.59, 572.79, 1010.65, 987.59, 745.61, 757.11, 1457.65], "total": 9371.19, "media": 780.93}, {"id": "571", "nome": "Carina Raquel De Santa Rosa (Fisioterapeuta Autônoma)", "meses": [445.46, 445.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 552.92], "total": 3931.98, "media": 327.66}, {"id": "572", "nome": "Pesquisa Coletiva", "meses": [557.69, 557.69, 449.82, 341.95, 449.82, 557.69, 557.69, 557.69, 428.25, 665.56, 665.56, 1094.79], "total": 6884.2, "media": 573.68}, {"id": "573", "nome": "Medline Servicos Medicos", "meses": [0, 0, 0, 2000.0, 572.74, 1354.87, 2163.0, 0, 0, 572.74, 572.74, 3133.22], "total": 10369.31, "media": 1481.33}, {"id": "578", "nome": "Vetprime Clinica Veterinaria & Petshop", "meses": [457.51, 457.5, 469.02, 480.55, 457.5, 457.5, 457.5, 480.55, 457.5, 457.5, 457.5, 914.99], "total": 6005.12, "media": 500.43}, {"id": "579", "nome": "Instituto Irma Rottschaefer", "meses": [478.24, 457.58, 457.5, 457.5, 457.5, 457.5, 478.24, 519.73, 467.87, 457.5, 457.5, 918.76], "total": 6065.42, "media": 505.45}, {"id": "581", "nome": "Novo Capital Consultoria Ltda", "meses": [1988.54, 2040.4, 1988.54, 1988.54, 1988.54, 1988.54, 1988.54, 1988.54, 1988.53, 1988.53, 1988.54, 1236.52], "total": 23162.3, "media": 1930.19}, {"id": "584", "nome": "Pdc - Programa De Desenvolvimento Do Cognitivo", "meses": [0, 0, 1825.66, 0, 0, 0, 0, 0, 0, 3500.0, 0, 0], "total": 5325.66, "media": 2662.83}, {"id": "585", "nome": "Vanessa Cristina Targino Santos Silvestre", "meses": [315.74, 276.46, 276.47, 276.46, 276.46, 276.47, 276.47, 276.46, 276.46, 276.46, 276.46, 552.92], "total": 3633.29, "media": 302.77}, {"id": "586", "nome": "Data Plus Technology Ltda", "meses": [342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 684.52], "total": 4449.38, "media": 370.78}, {"id": "587", "nome": "Instituto Dr Ruan Gomes", "meses": [961.67, 0, 1148.06, 1137.14, 1319.89, 849.19, 1713.32, 1606.48, 0, 0, 0, 0], "total": 8735.75, "media": 1247.96}, {"id": "588", "nome": "Dr. Marcelo De Oliveira Neves (Cirurgião Dentista Autônomo)", "meses": [526.46, 373.35, 373.36, 373.35, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 552.92], "total": 4134.66, "media": 344.56}, {"id": "589", "nome": "Clara Cox Consultoria", "meses": [343.31, 342.27, 376.84, 353.78, 342.26, 342.26, 342.27, 441.09, 440.97, 342.47, 342.27, 342.27], "total": 4352.06, "media": 362.67}, {"id": "592", "nome": "Registros Graficos Cardiologicos E Arritmia Ltda", "meses": [515.79, 515.46, 515.47, 515.46, 515.48, 515.47, 0, 0, 0, 515.46, 0, 0], "total": 3608.59, "media": 515.51}, {"id": "593", "nome": "Prime Dental", "meses": [779.47, 1056.04, 779.47, 779.47, 1056.04, 1056.04, 1056.04, 1056.04, 779.47, 779.47, 779.47, 1961.22], "total": 11918.24, "media": 993.19}, {"id": "596", "nome": "Osman Milk Ltda", "meses": [687.63, 933.56, 621.76, 1183.28, 1245.67, 621.52, 1183.25, 1183.25, 1117.14, 712.6, 1183.25, 1309.26], "total": 11982.17, "media": 998.51}, {"id": "599", "nome": "Pluri Home Care", "meses": [0, 1112.6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1112.6, "media": 1112.6}, {"id": "601", "nome": "Sorria Vida Odontologia Integrada", "meses": [627.44, 608.39, 745.71, 620.46, 630.36, 620.49, 508.1, 620.48, 745.31, 620.46, 782.75, 745.3], "total": 7875.25, "media": 656.27}, {"id": "602", "nome": "Dr. Anderson Oliveira (Cirurgião Dentista Autônomo)", "meses": [286.46, 276.47, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 552.92], "total": 3603.99, "media": 300.33}, {"id": "603", "nome": "Dr. Fábio Tadeu Ferreira Rodrigues (Cirurgião Dentista Autônomo)", "meses": [276.46, 276.85, 272.81, 277.28, 276.28, 273.07, 276.46, 276.7, 276.13, 275.56, 291.74, 552.92], "total": 3602.26, "media": 300.19}, {"id": "607", "nome": "Rll Consultoria", "meses": [342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 342.26, 634.59, 1034.47], "total": 5091.66, "media": 424.31}, {"id": "608", "nome": "Carlos Menezes", "meses": [572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 572.74, 1156.99], "total": 7457.13, "media": 621.43}, {"id": "609", "nome": "Martorelli Odontologia Ltda", "meses": [803.2, 803.2, 687.97, 803.2, 803.2, 803.2, 803.2, 803.2, 803.2, 803.2, 803.2, 1595.93], "total": 10315.9, "media": 859.66}, {"id": "611", "nome": "Grupozero Limpezas Ltda", "meses": [0, 0, 1762.64, 342.26, 342.26, 342.26, 541.91, 0, 0, 0, 0, 0], "total": 3331.33, "media": 666.27}, {"id": "613", "nome": "Isadora Maiatto De Castro (Cirurgiã Dentista Autônoma)", "meses": [276.46, 276.46, 276.46, 276.47, 276.46, 276.46, 250.0, 250.0, 250.0, 276.46, 276.46, 552.92], "total": 3514.61, "media": 292.88}, {"id": "614", "nome": "Elisa S. Magalhaes Solucoes Medicas", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 914.99], "total": 5947.49, "media": 495.62}, {"id": "615", "nome": "Lotus Saude Mental E Ocupacional Ltda", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 914.99], "total": 5947.49, "media": 495.62}, {"id": "617", "nome": "Cirta", "meses": [3510.95, 3924.31, 4101.65, 4368.22, 4424.31, 3907.56, 3654.04, 3942.13, 4241.75, 3942.13, 4529.85, 7315.21], "total": 51862.11, "media": 4321.84}, {"id": "619", "nome": "T Mendonca Tecnologia Ltda", "meses": [365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 730.6], "total": 4748.9, "media": 395.74}, {"id": "620", "nome": "Ovx Saude Multi", "meses": [1091.31, 1091.31, 803.21, 826.26, 1091.31, 1091.31, 803.21, 901.71, 1189.81, 1102.83, 1102.84, 2081.0], "total": 13176.11, "media": 1098.01}, {"id": "621", "nome": "Fino Traco Artes Visuais Ltda", "meses": [411.74, 411.74, 411.74, 411.74, 411.74, 411.74, 411.76, 411.74, 411.81, 411.87, 432.48, 823.49], "total": 5373.59, "media": 447.8}, {"id": "624", "nome": "Barra Urso Comercio Ltda", "meses": [786.13, 1203.15, 1203.15, 1352.95, 1394.1, 774.04, 1394.11, 1208.55, 1269.26, 798.62, 1394.11, 1703.77], "total": 14481.94, "media": 1206.83}, {"id": "625", "nome": "Agj Fonoaudiologia", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 654.5, 457.5, 457.5, 914.99], "total": 6144.49, "media": 512.04}, {"id": "628", "nome": "Vila Real Repouso Geriatrico", "meses": [2145.16, 2123.58, 2123.58, 2177.52, 2123.58, 2123.58, 2134.37, 2222.08, 2222.08, 2123.58, 2166.5, 4296.95], "total": 27982.56, "media": 2331.88}, {"id": "629", "nome": "Enercine", "meses": [342.26, 342.26, 342.26, 342.28, 342.27, 342.26, 342.16, 342.26, 342.27, 342.27, 342.26, 684.53], "total": 4449.34, "media": 370.78}, {"id": "632", "nome": "Clinica Delicate", "meses": [572.87, 480.56, 538.17, 457.52, 457.5, 457.5, 457.5, 666.02, 457.5, 469.02, 457.5, 936.99], "total": 6408.65, "media": 534.05}, {"id": "634", "nome": "Gfama Servicos Medicos E Anestesicos", "meses": [1458.01, 1701.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 3159.02, "media": 1579.51}, {"id": "635", "nome": "Jt Solucoes Para Piscinas", "meses": [307.7, 307.69, 365.31, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 307.69, 615.38], "total": 4057.6, "media": 338.13}, {"id": "638", "nome": "Ikigai Fisioterapia Ltda", "meses": [457.5, 469.02, 457.5, 457.5, 457.5, 457.5, 457.5, 687.98, 457.5, 687.98, 457.5, 956.9], "total": 6461.88, "media": 538.49}, {"id": "639", "nome": "Maíra Da Rocha", "meses": [276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 276.46, 552.92], "total": 3593.98, "media": 299.5}, {"id": "640", "nome": "Psiquiderma Saude Integrada", "meses": [457.5, 457.5, 457.5, 469.02, 457.5, 457.5, 469.02, 457.5, 457.5, 457.5, 457.5, 914.99], "total": 5970.53, "media": 497.54}, {"id": "641", "nome": "Arcabarone", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 914.99], "total": 5947.49, "media": 495.62}, {"id": "642", "nome": "Vcp Niteroi Apoio Administrativo Ltda", "meses": [284.64, 284.64, 284.64, 284.64, 284.64, 0, 0, 0, 0, 0, 0, 0], "total": 1423.2, "media": 284.64}, {"id": "643", "nome": "Mmp Servicos Medicos", "meses": [396.32, 396.32, 308.38, 308.37, 308.36, 308.37, 308.36, 308.37, 308.38, 308.37, 308.36, 308.36], "total": 3876.32, "media": 323.03}, {"id": "644", "nome": "Rockinsight", "meses": [457.5, 469.02, 457.5, 457.5, 457.5, 648.12, 0, 0, 0, 0, 0, 0], "total": 2947.14, "media": 491.19}, {"id": "648", "nome": "Gsf Servicos Medicos", "meses": [457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 457.5, 914.99], "total": 5947.49, "media": 495.62}, {"id": "649", "nome": "Malps Executive Solutions", "meses": [342.26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 342.26, "media": 342.26}, {"id": "650", "nome": "Tech Info", "meses": [457.49, 0, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 365.3, 0, 365.3, 730.6], "total": 4110.49, "media": 411.05}, {"id": "651", "nome": "Cocriar Consultoria Em Educacao", "meses": [266.43, 365.64, 457.53, 365.3, 469.0, 469.69, 468.99, 468.99, 492.04, 468.99, 468.99, 901.34], "total": 5662.93, "media": 471.91}, {"id": "652", "nome": "Cs Cavalcante Siqueira", "meses": [308.36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 308.36, "media": 308.36}, {"id": "653", "nome": "Cs Cavalcante Siqueira", "meses": [0, 4193.21, 1832.4, 2074.44, 2097.49, 2080.88, 2609.39, 581.61, 581.61, 581.61, 0, 0], "total": 16632.64, "media": 1848.07}, {"id": "654", "nome": "Odonto Oliveira", "meses": [540.54, 528.06, 528.05, 533.06, 545.55, 520.58, 670.39, 595.85, 595.85, 620.45, 620.45, 620.45], "total": 6919.28, "media": 576.61}, {"id": "655", "nome": "F.g.j.l Servicos De Saude, Diagnostico E Imagem Ltda", "meses": [536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 751.86, 536.12, 751.86, 751.86, 751.86, 1150.68], "total": 7910.96, "media": 659.25}, {"id": "656", "nome": "Rayza&lima Servicos Medicos Ltda", "meses": [457.49, 457.49, 457.49, 457.49, 457.49, 457.49, 457.49, 457.49, 457.49, 469.01, 457.49, 914.98], "total": 5958.89, "media": 496.57}, {"id": "658", "nome": "Saory", "meses": [428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 439.03, 428.25, 428.25, 856.49], "total": 5578.02, "media": 464.84}, {"id": "659", "nome": "Dr. Igor De Martino - Odontologia Veterinaria", "meses": [536.12, 536.12, 536.12, 536.12, 536.12, 0, 536.12, 536.12, 536.12, 751.86, 536.12, 1307.57], "total": 6884.51, "media": 625.86}, {"id": "660", "nome": "Rbt Mangelli Odontologia", "meses": [341.95, 841.95, 841.95, 341.95, 341.95, 341.96, 341.95, 341.96, 341.96, 341.96, 341.96, 683.91], "total": 5445.41, "media": 453.78}, {"id": "661", "nome": "Odontologia Integrada", "meses": [576.9, 557.7, 656.19, 764.16, 590.05, 536.12, 665.56, 665.56, 665.56, 751.86, 665.56, 1372.31], "total": 8467.53, "media": 705.63}, {"id": "662", "nome": "Francine Magalhães Novaes Cruz", "meses": [337.29, 337.29, 337.3, 337.3, 337.3, 0, 0, 0, 0, 0, 0, 0], "total": 1686.48, "media": 337.3}, {"id": "663", "nome": "Villa Niteroi", "meses": [449.82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 449.82, "media": 449.82}, {"id": "664", "nome": "Translab", "meses": [0, 912.43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 912.43, "media": 912.43}, {"id": "668", "nome": "Rinaldi Saude Integrada Ltda", "meses": [341.62, 452.87, 341.95, 341.9, 352.74, 428.25, 341.2, 341.95, 341.95, 341.95, 0, 699.59], "total": 4325.97, "media": 393.27}, {"id": "670", "nome": "Mafra Servicos Medicos", "meses": [341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 428.25, 778.04], "total": 4625.79, "media": 385.48}, {"id": "671", "nome": "Drao Consultoria Ltda", "meses": [347.07, 347.07, 347.07, 347.07, 646.57, 705.0, 646.57, 646.57, 646.57, 646.57, 405.5, 405.5], "total": 6137.13, "media": 511.43}, {"id": "672", "nome": "Espaço Analise De Caroline Gonçalves", "meses": [0, 0, 0, 396.56, 396.56, 529.78, 130.12, 130.12, 0, 0, 0, 0], "total": 1583.14, "media": 316.63}, {"id": "673", "nome": "A. Sare & R.tragante Servicos Neurocirurgicos Ltda", "meses": [1194.12, 1183.34, 1183.34, 913.67, 1194.12, 1183.34, 546.9, 1453.01, 1453.01, 1453.01, 546.9, 2032.27], "total": 14337.03, "media": 1194.75}, {"id": "675", "nome": "Maria Bonita", "meses": [676.35, 643.99, 643.99, 643.99, 643.99, 643.99, 643.99, 643.99, 643.99, 643.99, 643.99, 1287.97], "total": 8404.22, "media": 700.35}, {"id": "676", "nome": "Pepe Sidra", "meses": [61.95, 341.95, 341.95, 341.95, 341.95, 431.12, 0, 0, 0, 0, 0, 0], "total": 1860.87, "media": 310.14}, {"id": "677", "nome": "Tamyres Nunes Odontologia E Estetica Ltda", "meses": [697.92, 697.92, 404.97, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1800.81, "media": 600.27}, {"id": "678", "nome": "Clinica Unique Concept", "meses": [592.48, 580.8, 580.8, 580.8, 580.8, 580.8, 580.8, 580.8, 580.8, 580.81, 580.8, 317.0], "total": 6717.49, "media": 559.79}, {"id": "679", "nome": "Ebpnf", "meses": [320.37, 320.37, 0, 320.37, 341.94, 320.37, 320.37, 320.37, 320.45, 320.37, 320.37, 640.9], "total": 3866.25, "media": 351.48}, {"id": "680", "nome": "Sandra Da Silveira Ferreira", "meses": [311.17, 311.17, 311.17, 311.17, 311.17, 0, 0, 0, 0, 0, 0, 0], "total": 1555.85, "media": 311.17}, {"id": "682", "nome": "Aj Midias", "meses": [320.37, 320.37, 320.41, 320.37, 374.31, 374.31, 374.32, 374.31, 320.37, 320.37, 374.41, 719.21], "total": 4513.13, "media": 376.09}, {"id": "683", "nome": "Lima Servicos Medicos", "meses": [341.95, 341.95, 341.96, 341.95, 341.95, 341.95, 428.25, 428.25, 341.95, 341.95, 341.95, 699.59], "total": 4633.65, "media": 386.14}, {"id": "684", "nome": "A&a Rio", "meses": [1453.01, 1183.34, 1183.34, 1453.01, 1506.94, 1453.01, 2006.94, 1953.01, 2006.94, 1453.01, 1453.01, 2986.43], "total": 20091.99, "media": 1674.33}, {"id": "685", "nome": "Levemente Psicologia E Neuropsicologia Ltda", "meses": [439.03, 590.05, 590.05, 590.05, 590.05, 590.05, 590.05, 590.05, 590.05, 590.05, 590.05, 1165.39], "total": 7504.92, "media": 625.41}, {"id": "687", "nome": "Amx Seguros", "meses": [497.0, 497.01, 497.0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1491.01, "media": 497.0}, {"id": "688", "nome": "Renata Martins Rodrigues", "meses": [374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 499.08], "total": 4616.49, "media": 384.71}, {"id": "689", "nome": "Sv Endocrinologia Avancada Ltda", "meses": [887.91, 887.91, 887.91, 678.25, 887.91, 887.91, 887.91, 887.91, 887.91, 887.91, 992.75, 1661.46], "total": 11323.65, "media": 943.64}, {"id": "690", "nome": "B&a", "meses": [261.95, 341.95, 341.96, 428.26, 428.26, 428.26, 428.26, 428.25, 428.26, 428.25, 428.26, 832.96], "total": 5204.88, "media": 433.74}, {"id": "691", "nome": "Beauty And Dental Clinic", "meses": [428.25, 428.26, 428.25, 428.26, 428.25, 590.05, 428.25, 428.26, 428.26, 590.06, 590.05, 900.62], "total": 6096.82, "media": 508.07}, {"id": "693", "nome": "Jl Dentistas Associados Ltda", "meses": [536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 536.12, 1072.23], "total": 6969.55, "media": 580.8}, {"id": "694", "nome": "Dutra E Velloso Assistencia Medica", "meses": [935.23, 1129.4, 751.86, 1399.08, 1129.4, 1129.4, 1129.4, 1129.4, 1129.4, 1129.4, 913.66, 2214.46], "total": 14120.09, "media": 1176.67}, {"id": "696", "nome": "Ygor Marques Edicoes Ltda", "meses": [383.67, 383.67, 394.15, 341.73, 352.22, 331.25, 331.26, 331.25, 331.25, 331.25, 383.67, 714.08], "total": 4609.45, "media": 384.12}, {"id": "697", "nome": "Rcc Anestesiologia", "meses": [449.82, 449.82, 449.82, 449.84, 449.82, 449.82, 449.84, 0, 0, 0, 0, 0], "total": 3148.78, "media": 449.83}, {"id": "698", "nome": "Clinica De Neurocirurgia Mbg Consultas E Servicos Medicos Ltda", "meses": [536.12, 536.12, 536.12, 536.14, 536.12, 536.12, 536.12, 536.12, 536.12, 536.14, 536.12, 878.06], "total": 6775.42, "media": 564.62}, {"id": "699", "nome": "Mbg Consultoria E Pesquisas Ltda", "meses": [320.37, 320.37, 320.37, 374.31, 320.37, 374.31, 320.37, 320.37, 320.37, 374.34, 320.37, 655.45], "total": 4341.37, "media": 361.78}, {"id": "700", "nome": "Ana Luiza Alvarenga Servicos Medicos", "meses": [428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 439.04, 439.03, 428.25, 428.25, 428.25, 878.06], "total": 5610.38, "media": 467.53}, {"id": "702", "nome": "Nk Logistica Internacional", "meses": [320.37, 320.37, 320.37, 320.37, 320.37, 374.31, 320.37, 320.37, 320.37, 320.37, 320.37, 742.72], "total": 4320.73, "media": 360.06}, {"id": "704", "nome": "Rcmciber", "meses": [428.25, 428.25, 439.03, 439.03, 428.25, 428.25, 439.03, 449.82, 428.25, 428.25, 428.25, 858.45], "total": 5623.11, "media": 468.59}, {"id": "706", "nome": "Machados Servicos Medicos", "meses": [341.95, 428.25, 449.82, 449.84, 449.82, 449.82, 449.84, 449.82, 449.82, 449.82, 449.82, 887.89], "total": 5706.51, "media": 475.54}, {"id": "707", "nome": "Md Participacoes", "meses": [266.44, 266.44, 266.44, 266.47, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 532.88], "total": 3463.75, "media": 288.65}, {"id": "708", "nome": "Bossa Research", "meses": [697.92, 471.39, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 417.45, 697.62], "total": 4847.34, "media": 403.94}, {"id": "709", "nome": "Maine Vidal Neuropediatria", "meses": [428.25, 428.25, 428.25, 428.26, 428.25, 428.25, 428.25, 428.25, 428.25, 590.05, 428.25, 870.22], "total": 5742.78, "media": 478.56}, {"id": "710", "nome": "Techmed Solucoes Tecnologicas Ltda", "meses": [385.77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 385.77, "media": 385.77}, {"id": "711", "nome": "S.l. Cabral Servicos Medicos Ltda", "meses": [266.44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 266.44, "media": 266.44}, {"id": "712", "nome": "Parente Vet Ltda", "meses": [342.2, 341.95, 0, 341.95, 341.95, 341.95, 428.25, 0, 341.95, 0, 0, 0], "total": 2480.2, "media": 354.31}, {"id": "714", "nome": "Marilena De Figueiredo Pessanha", "meses": [257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65, 257.65], "total": 3091.8, "media": 257.65}, {"id": "715", "nome": "Al Lins Neto Servicos Administrativos", "meses": [331.16, 320.37, 320.37, 320.37, 320.37, 374.31, 320.37, 320.37, 320.37, 320.37, 320.37, 645.64], "total": 4234.44, "media": 352.87}, {"id": "717", "nome": "Com Viver Arquitetura", "meses": [460.61, 428.25, 449.82, 526.75, 440.45, 341.95, 449.82, 557.69, 449.82, 341.95, 341.95, 844.73], "total": 5633.79, "media": 469.48}, {"id": "718", "nome": "Centro De Reabilitacao Offredi Vianna", "meses": [364.94, 364.94, 266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 697.92, 697.92, 697.93, 1082.05], "total": 5504.34, "media": 458.69}, {"id": "719", "nome": "Cp Lopes Engenharia E Comercio Ltda", "meses": [449.82, 449.82, 352.73, 341.95, 502.41, 0, 0, 0, 0, 0, 0, 0], "total": 2096.73, "media": 419.35}, {"id": "722", "nome": "Almeida E Maciel Advocacia", "meses": [266.44, 266.44, 266.44, 266.44, 266.44, 266.44, 320.37, 320.37, 320.37, 320.37, 320.39, 640.74], "total": 3841.25, "media": 320.1}, {"id": "723", "nome": "Fjm Ultrassonografia Avancada Ltda", "meses": [1436.0, 0, 913.66, 924.45, 913.66, 913.66, 913.66, 913.66, 913.66, 913.66, 913.66, 1827.32], "total": 11497.05, "media": 1045.19}, {"id": "724", "nome": "Clinica Veronica Ferrari", "meses": [1072.5, 1014.07, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 2086.57, "media": 1043.29}, {"id": "725", "nome": "Destak Saude", "meses": [332.31, 416.17, 416.17, 416.17, 573.42, 416.17, 573.42, 332.31, 416.17, 416.17, 416.19, 845.69], "total": 5570.36, "media": 464.2}, {"id": "726", "nome": "Carolina Labanca Psicologia E Psicanalise", "meses": [370.44, 370.44, 370.44, 370.44, 370.45, 370.45, 370.44, 370.44, 370.45, 370.45, 370.44, 370.45], "total": 4445.33, "media": 370.44}, {"id": "728", "nome": "Ap Real Estate Solutions Ltda", "meses": [536.11, 536.11, 536.12, 536.11, 536.11, 536.11, 536.11, 536.11, 536.11, 536.18, 536.11, 1072.22], "total": 6969.51, "media": 580.79}, {"id": "729", "nome": "Clinica Sao Miguel", "meses": [352.74, 406.44, 417.23, 363.41, 363.42, 341.96, 341.96, 341.96, 352.75, 342.01, 352.74, 684.05], "total": 4660.67, "media": 388.39}, {"id": "730", "nome": "Biofor", "meses": [428.25, 428.25, 428.25, 428.26, 428.26, 428.25, 352.74, 428.25, 428.25, 428.25, 428.25, 848.65], "total": 5483.91, "media": 456.99}, {"id": "731", "nome": "Clinica Multiprofissional Fonohero Ltda", "meses": [428.25, 428.25, 460.62, 536.12, 536.12, 546.9, 708.71, 536.12, 536.12, 643.99, 805.79, 643.98], "total": 6810.97, "media": 567.58}, {"id": "732", "nome": "Gnrj Servicos Medicos", "meses": [536.12, 697.92, 913.66, 913.66, 536.12, 697.92, 697.92, 697.92, 536.12, 697.92, 913.66, 1626.29], "total": 9465.23, "media": 788.77}, {"id": "733", "nome": "Eara Niteroi Aprendizagem E Desenvolvimento", "meses": [428.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 428.25, "media": 428.25}, {"id": "735", "nome": "Martins E Mota Advogados Associados", "meses": [320.37, 320.37, 374.31, 0, 320.37, 320.37, 374.31, 374.31, 320.38, 374.31, 320.37, 719.2], "total": 4138.67, "media": 376.24}, {"id": "736", "nome": "Veronica Vilas Boas Ferrari Jeovani", "meses": [0, 0, 1458.12, 1477.99, 2880.31, 2032.89, 1687.45, 1453.74, 1570.58, 1582.27, 1570.59, 1336.87], "total": 17050.81, "media": 1705.08}, {"id": "737", "nome": "Simone Do Valle Austgulen", "meses": [341.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 311.17, 622.34], "total": 4075.21, "media": 339.6}, {"id": "738", "nome": "Portal Okto Psicologia E Desenvolvimento Humano", "meses": [428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 856.49], "total": 5567.24, "media": 463.94}, {"id": "740", "nome": "Aml Chocolates E Doces Finos Ltda", "meses": [946.02, 881.3, 1363.48, 935.24, 1363.48, 1385.05, 946.02, 935.24, 881.3, 902.87, 881.3, 1921.4], "total": 13342.7, "media": 1111.89}, {"id": "741", "nome": "R&v Refrigeracao E Eletrica Ltda", "meses": [320.37, 341.94, 320.37, 0, 0, 320.37, 320.39, 0, 0, 0, 331.15, 0], "total": 1954.59, "media": 325.76}, {"id": "742", "nome": "Baranauskas I9Acao For All", "meses": [374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 374.31, 320.37, 374.31, 374.31, 374.32, 744.47], "total": 4807.95, "media": 400.66}, {"id": "743", "nome": "Levy Odontologia", "meses": [1311.91, 1117.73, 1460.66, 1588.69, 1577.9, 1101.04, 997.66, 0, 0, 0, 1161.76, 0], "total": 10317.35, "media": 1289.67}, {"id": "744", "nome": "Fabricio Figueira Nutricao", "meses": [341.95, 341.95, 341.97, 341.96, 341.96, 341.95, 341.96, 341.95, 341.95, 341.95, 341.95, 770.21], "total": 4531.71, "media": 377.64}, {"id": "746", "nome": "Yosef Tzadik Sociedade Individual De Advocacia", "meses": [320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 640.74], "total": 4164.81, "media": 347.07}, {"id": "747", "nome": "Simplifica Doctor", "meses": [659.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 659.03, "media": 659.03}, {"id": "748", "nome": "Clinidoctor", "meses": [1675.98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1675.98, "media": 1675.98}, {"id": "749", "nome": "Regina Ester Sabenca - Clinica De Fonoaudiologia Ltda", "meses": [528.72, 528.71, 0, 417.55, 463.94, 464.29, 463.94, 463.96, 650.91, 463.95, 463.95, 463.96], "total": 5373.88, "media": 488.53}, {"id": "750", "nome": "Vital Help Saude", "meses": [317.0, 317.0, 327.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 634.0], "total": 4131.0, "media": 344.25}, {"id": "751", "nome": "Cird - Centro Integrado De Reabilitacao E Clinica Especializada Em Dor", "meses": [1830.56, 2064.81, 2618.74, 2618.74, 2834.48, 2869.91, 2879.23, 2879.23, 3148.91, 2869.91, 2869.91, 4979.95], "total": 34464.38, "media": 2872.03}, {"id": "752", "nome": "Natasha Sheeny Estetica Avancada", "meses": [562.94, 510.53, 615.36, 615.36, 720.19, 667.77, 825.02, 825.02, 1202.36, 1030.67, 1125.02, 1508.04], "total": 10208.28, "media": 850.69}, {"id": "753", "nome": "Natasha Natal Sheeny Castro", "meses": [337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1], "total": 4045.2, "media": 337.1}, {"id": "754", "nome": "Proisse Reabilitacao E Saude", "meses": [630.5, 630.51, 721.37, 280.51, 371.35, 630.5, 546.35, 455.5, 280.5, 280.5, 274.08, 280.5], "total": 5382.17, "media": 448.51}, {"id": "755", "nome": "Ana Cristina Costa Franco", "meses": [564.09, 564.09, 564.12, 564.09, 564.09, 564.09, 564.09, 564.09, 564.09, 564.09, 564.09, 564.09], "total": 6769.11, "media": 564.09}, {"id": "756", "nome": "Natalia Nakamura Verissimo", "meses": [337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1, 337.1], "total": 4045.2, "media": 337.1}, {"id": "757", "nome": "Instituto A Arte De Ouvir E Falar", "meses": [639.22, 463.93, 639.22, 639.22, 639.22, 639.22, 639.22, 854.58, 854.58, 756.08, 756.08, 580.79], "total": 8101.36, "media": 675.11}, {"id": "758", "nome": "Rreiniger's Softwares", "meses": [320.38, 320.37, 400.75, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1041.5, "media": 347.17}, {"id": "759", "nome": "Conserte", "meses": [2100.23, 2208.1, 2208.1, 2262.03, 2262.03, 2262.03, 2262.03, 2262.03, 2459.03, 2208.1, 2208.1, 2208.1], "total": 26909.91, "media": 2242.49}, {"id": "760", "nome": "Carla Storch Servico De Psicologia", "meses": [697.92, 647.42, 697.92, 697.92, 697.92, 697.92, 1138.1, 1138.1, 1353.84, 913.67, 697.92, 1670.42], "total": 11049.07, "media": 920.76}, {"id": "761", "nome": "Entre Nos Psicologia", "meses": [343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41, 343.41], "total": 4120.92, "media": 343.41}, {"id": "762", "nome": "Nogueira - Servicos Medicos", "meses": [536.12, 536.12, 266.44, 266.52, 0, 0, 0, 0, 0, 0, 0, 0], "total": 1605.2, "media": 401.3}, {"id": "764", "nome": "Kt Consultoria", "meses": [428.25, 428.25, 428.25, 428.25, 428.25, 449.82, 428.25, 428.25, 428.25, 428.25, 1305.25, 880.02], "total": 6489.34, "media": 540.78}, {"id": "765", "nome": "Dra Julia Morgan", "meses": [320.37, 331.15, 0, 0, 0, 650.0, 457.86, 436.31, 115.94, 115.94, 115.94, 115.94], "total": 2659.45, "media": 295.49}, {"id": "766", "nome": "Celi Costa Psicologia", "meses": [428.25, 428.25, 439.04, 428.25, 428.25, 380.0, 380.0, 380.0, 428.26, 428.25, 449.82, 565.76], "total": 5164.13, "media": 430.34}, {"id": "777", "nome": "Be-Vigorous", "meses": [428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 428.25, 536.12, 536.12, 428.25, 876.1], "total": 5802.59, "media": 483.55}, {"id": "778", "nome": "Espaco Integrativo Juliana Serpa Kikuti Psicologia", "meses": [756.08, 756.08, 756.08, 756.08, 756.08, 756.08, 1328.41, 1340.09, 1340.09, 756.08, 767.76, 756.08], "total": 10824.99, "media": 902.08}, {"id": "779", "nome": "Dax Data Solutions", "meses": [320.37, 320.37, 320.37, 320.37, 320.37, 331.16, 320.37, 374.31, 320.37, 374.31, 374.31, 709.39], "total": 4406.07, "media": 367.17}, {"id": "780", "nome": "Clinica Florescer", "meses": [463.94, 463.94, 639.23, 639.23, 639.23, 649.53, 639.23, 639.23, 639.22, 639.23, 639.23, 639.23], "total": 7330.47, "media": 610.87}, {"id": "781", "nome": "Delta Sono", "meses": [341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.95, 341.96, 341.95, 0], "total": 3761.46, "media": 341.95}, {"id": "782", "nome": "Bruno Barreto Sistemas", "meses": [320.89, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 320.37, 0, 320.37, 0, 0], "total": 2883.85, "media": 320.43}, {"id": "783", "nome": "Dutra Inspecoes", "meses": [374.31, 331.16, 320.37, 374.31, 320.37, 320.37, 320.37, 320.37, 320.45, 320.37, 320.37, 650.55], "total": 4293.37, "media": 357.78}, {"id": "784", "nome": "Odontologia Especial Servicos Odontologicos Ltda", "meses": [592.47, 756.08, 756.08, 767.76, 580.79, 580.79, 989.79, 989.79, 872.94, 756.08, 756.08, 989.79], "total": 9388.44, "media": 782.37}, {"id": "785", "nome": "Costa & Lemos Sociedade De Advogados", "meses": [419.25, 419.25, 419.25, 493.42, 419.25, 419.25, 419.25, 419.25, 527.58, 473.42, 527.58, 473.42], "total": 5430.17, "media": 452.51}, {"id": "786", "nome": "Healthgen Clinic", "meses": [341.95, 341.95, 341.95, 341.96, 341.95, 341.96, 308.7, 297.0, 297.08, 297.0, 308.06, 619.58], "total": 4179.14, "media": 348.26}, {"id": "787", "nome": "Israel F Da Silveira Fisioterapia Ltda", "meses": [590.05, 805.79, 590.05, 590.05, 805.79, 590.05, 805.79, 805.79, 805.79, 805.79, 805.79, 1533.13], "total": 9533.86, "media": 794.49}, {"id": "788", "nome": "Pedro Zanon Fisioterapia", "meses": [428.25, 428.25, 439.03, 428.25, 590.05, 428.25, 428.25, 428.25, 439.03, 428.25, 428.25, 871.2], "total": 5765.31, "media": 480.44}, {"id": "789", "nome": "Renata Dutra Psicologia", "meses": [317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 333.26, 333.26, 333.26, 654.69], "total": 4190.47, "media": 349.21}, {"id": "790", "nome": "Juliana Sant Anna Psicologia", "meses": [341.95, 352.74, 341.95, 352.74, 352.74, 352.74, 341.95, 352.74, 341.95, 341.95, 341.95, 455.93], "total": 4271.33, "media": 355.94}, {"id": "793", "nome": "Mayra Pecly Nutricao", "meses": [370.45, 370.45, 370.46, 370.46, 370.46, 487.32, 475.62, 475.67, 463.98, 463.95, 487.32, 463.95], "total": 5170.09, "media": 430.84}, {"id": "794", "nome": "Almrg Consultoria", "meses": [320.37, 320.37, 320.37, 320.4, 320.37, 374.31, 320.37, 320.37, 374.31, 374.31, 320.37, 655.45], "total": 4341.37, "media": 361.78}, {"id": "795", "nome": "Rreiniger Solucoes Digitais Ltda", "meses": [247.01, 247.0, 247.0, 247.0, 247.0, 247.0, 247.0, 247.0, 247.0, 247.0, 247.0, 494.0], "total": 3211.01, "media": 267.58}, {"id": "796", "nome": "Vagalume", "meses": [697.0, 1300.0, 1211.0, 1606.92, 1284.02, 1014.0, 1014.0, 1464.03, 1999.84, 1499.79, 1819.82, 1049.76], "total": 15960.18, "media": 1330.02}, {"id": "798", "nome": "Rori Centro Terapeutica", "meses": [547.0, 547.0, 407.0, 547.0, 547.0, 547.0, 547.0, 547.0, 547.0, 547.0, 557.0, 1080.36], "total": 6967.36, "media": 580.61}, {"id": "799", "nome": "Dra. Juliana Lemos", "meses": [397.0, 397.0, 397.0, 397.0, 407.0, 397.0, 417.0, 397.05, 397.0, 397.0, 397.0, 795.82], "total": 5192.87, "media": 432.74}, {"id": "800", "nome": "Tn Odontologia E Estetica Ltda", "meses": [579.58, 579.59, 1085.22, 976.89, 976.89, 1085.21, 664.89, 632.39, 664.89, 632.39, 643.22, 849.05], "total": 9370.21, "media": 780.85}, {"id": "802", "nome": "Proximal", "meses": [317.01, 317.0, 327.0, 317.0, 337.0, 397.0, 407.0, 417.0, 397.0, 0, 0, 0], "total": 3233.01, "media": 359.22}, {"id": "803", "nome": "Rio De Janeiro Corretora De Seguros E Administradora De Beneficios", "meses": [317.0, 317.0, 422.66, 422.66, 422.66, 317.0, 317.0, 317.0, 317.0, 0, 0, 300.0], "total": 3469.98, "media": 347.0}, {"id": "804", "nome": "Bss Educacao E Servicos De Fisioterapia Ltda", "meses": [0, 317.0, 327.0, 317.02, 317.0, 317.0, 317.0, 337.0, 317.0, 337.0, 327.0, 634.04], "total": 3864.06, "media": 351.28}, {"id": "805", "nome": "Espaco De Aprendizagem Juliana Wanderley Ltda", "meses": [317.01, 317.0, 317.0, 317.0, 397.0, 317.0, 317.0, 417.0, 397.01, 397.0, 317.0, 317.0], "total": 4144.02, "media": 345.34}, {"id": "806", "nome": "Guarana Producoes", "meses": [297.0, 297.0, 297.0, 297.0, 297.0, 357.0, 297.0, 387.0, 347.0, 297.0, 347.0, 665.82], "total": 4182.82, "media": 348.57}, {"id": "807", "nome": "Luiza Mattos Neuropediatria", "meses": [397.0, 547.0, 547.0, 397.0, 547.0, 397.0, 547.0, 557.0, 547.0, 547.0, 547.0, 1053.09], "total": 6630.09, "media": 552.51}, {"id": "808", "nome": "Gbs - Global Service Ltda", "meses": [0, 547.02, 777.04, 777.04, 777.04, 777.04, 974.87, 1024.87, 1024.87, 844.76, 744.1, 1054.12], "total": 9322.77, "media": 847.52}, {"id": "809", "nome": "Dks Fono", "meses": [317.0, 677.03, 677.03, 677.03, 677.03, 547.02, 677.03, 677.03, 677.03, 677.0, 677.03, 547.02], "total": 7504.28, "media": 625.36}, {"id": "810", "nome": "Bianca Nicolaci Psicologia Ltda", "meses": [650.5, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 547.0, 397.0, 397.0, 397.0, 807.64], "total": 5578.14, "media": 464.85}, {"id": "811", "nome": "Clinica Alimenta Psi Ltda", "meses": [425.33, 417.01, 525.34, 655.35, 655.35, 655.35, 655.35, 655.35, 885.37, 885.37, 926.81, 900.21], "total": 8242.19, "media": 686.85}, {"id": "812", "nome": "Lequinho Torres", "meses": [267.58, 375.91, 321.75, 267.6, 267.58, 267.58, 267.58, 267.58, 321.76, 267.6, 321.75, 267.58], "total": 3481.85, "media": 290.15}, {"id": "813", "nome": "Grp Psicologia Ltda", "meses": [949.67, 677.03, 547.02, 848.52, 848.52, 547.02, 547.02, 547.02, 547.02, 547.02, 572.62, 691.87], "total": 7870.35, "media": 655.86}, {"id": "814", "nome": "Clinica Medica Abad Ltda", "meses": [317.0, 417.0, 397.0, 517.0, 517.0, 517.0, 317.0, 517.0, 317.0, 417.0, 417.0, 841.27], "total": 5508.27, "media": 459.02}, {"id": "815", "nome": "Mariana Batista Servicos De Saude Ltda", "meses": [327.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 634.0], "total": 4131.0, "media": 344.25}, {"id": "816", "nome": "Julio Marins Fisioterapia Ltda", "meses": [317.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 526.91], "total": 4813.91, "media": 401.16}, {"id": "817", "nome": "Fono Linguagem Viva", "meses": [317.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 786.73], "total": 5073.73, "media": 422.81}, {"id": "818", "nome": "Panther Protection Services Ltda", "meses": [566.17, 547.0, 547.02, 547.02, 547.02, 0, 547.02, 547.02, 547.02, 317.0, 0, 0], "total": 4712.29, "media": 523.59}, {"id": "819", "nome": "Geronfisio - Fisioterapia Especializada Em Gerontologia", "meses": [317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 397.0, 317.0, 417.0, 317.0, 650.36], "total": 4317.36, "media": 359.78}, {"id": "820", "nome": "Clinica Medica Dra. Giselle Leite", "meses": [406.08, 397.0, 397.0, 0, 397.0, 397.0, 397.0, 397.0, 397.0, 547.0, 397.0, 807.64], "total": 4936.72, "media": 448.79}, {"id": "822", "nome": "A. F. Laboratorio De Protese Dentaria Ltda", "meses": [407.01, 397.0, 407.0, 397.0, 397.0, 407.0, 407.0, 397.0, 407.0, 417.0, 397.0, 794.0], "total": 5231.01, "media": 435.92}, {"id": "824", "nome": "Menegusso Nogueira Servicos Medicos Ltda", "meses": [317.0, 647.0, 407.0, 397.0, 397.0, 397.0, 397.0, 397.0, 397.0, 547.0, 407.0, 793.09], "total": 5500.09, "media": 458.34}, {"id": "825", "nome": "Juliana Monzatto Servicos De Nutricao Ltda", "meses": [317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 3804.0, "media": 317.0}, {"id": "826", "nome": "Julia Rodrigues De Lemos", "meses": [382.0, 436.91, 427.01, 427.01, 436.91, 427.01, 427.01, 427.01, 427.01, 427.01, 427.01, 446.06], "total": 5117.96, "media": 426.5}, {"id": "827", "nome": "Bio Saude", "meses": [966.98, 1129.47, 1183.63, 1857.54, 1665.36, 1839.53, 1839.53, 1839.53, 1839.53, 2002.01, 2110.33, 2044.48], "total": 20317.92, "media": 1693.16}, {"id": "828", "nome": "Bio Sst Consultoria", "meses": [417.73, 606.28, 417.01, 516.91, 407.0, 417.01, 317.0, 317.0, 326.9, 326.9, 317.0, 331.14], "total": 4717.88, "media": 393.16}, {"id": "829", "nome": "Bio Seguranca", "meses": [2074.34, 2292.79, 1727.12, 1416.99, 1087.06, 1407.09, 1416.99, 1087.06, 1416.99, 1096.96, 1416.99, 1480.19], "total": 17920.57, "media": 1493.38}, {"id": "831", "nome": "Vpd Servicos Medicos", "meses": [317.0, 317.0, 417.01, 417.01, 417.01, 448.12, 426.91, 417.01, 417.01, 417.01, 417.01, 417.01], "total": 4845.11, "media": 403.76}, {"id": "832", "nome": "Kleber Goncalves Sociedade Individual De Advocacia", "meses": [674.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 417.0, 417.0, 317.0, 547.0], "total": 4591.0, "media": 382.58}, {"id": "834", "nome": "Olyra Cuidado Integral", "meses": [0, 183.16, 380.16, 390.88, 425.33, 425.33, 425.33, 505.04, 566.17, 566.17, 566.17, 566.17], "total": 4999.91, "media": 454.54}, {"id": "835", "nome": "Deep Saude", "meses": [0, 317.0, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01], "total": 4487.1, "media": 407.92}, {"id": "836", "nome": "Ellos Da Mente Ltda", "meses": [425.33, 547.02, 417.01, 547.02, 873.02, 752.91, 743.01, 743.01, 417.01, 417.13, 417.01, 417.01], "total": 6716.49, "media": 559.71}, {"id": "837", "nome": "Maes De Trigo Psicologia", "meses": [417.0, 417.01, 547.02, 426.91, 547.02, 547.02, 417.01, 547.02, 547.02, 547.02, 547.02, 547.02], "total": 6054.09, "media": 504.51}, {"id": "838", "nome": "Maria Clara Cortez De Omena Vasques", "meses": [367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0, 367.0], "total": 4404.0, "media": 367.0}, {"id": "839", "nome": "Barbara Magalhães Da Silva", "meses": [367.0, 367.0, 367.0, 367.0, 0, 0, 0, 367.0, 367.0, 0, 0, 367.0], "total": 2569.0, "media": 367.0}, {"id": "845", "nome": "Luanna Ribeiro Sousa", "meses": [592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58], "total": 7110.96, "media": 592.58}, {"id": "846", "nome": "Espaco Anne Nunes - Desenvolvimento Infantil", "meses": [317.0, 317.0, 317.0, 556.92, 0, 547.02, 547.02, 547.02, 547.02, 547.02, 547.02, 547.02], "total": 5337.06, "media": 485.19}, {"id": "847", "nome": "Marsil Antunes Odontologia Ltda", "meses": [317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 3804.0, "media": 317.0}, {"id": "848", "nome": "João Henrique De Brito Cavalcanti", "meses": [367.0, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.59, 592.58, 592.58, 592.58, 592.58], "total": 6885.39, "media": 573.78}, {"id": "849", "nome": "Pequeninos", "meses": [0, 0, 317.0, 326.9, 317.0, 317.0, 417.01, 417.01, 317.0, 317.0, 317.0, 317.0], "total": 3379.92, "media": 337.99}, {"id": "850", "nome": "Entresaude", "meses": [0, 0, 417.01, 417.01, 547.02, 547.02, 417.01, 547.02, 547.02, 417.01, 547.02, 547.02], "total": 4950.16, "media": 495.02}, {"id": "851", "nome": "Dra. Ana Carolina Matos Saude Integral", "meses": [0, 317.0, 326.9, 417.01, 417.01, 417.01, 417.01, 417.01, 417.01, 417.03, 417.01, 436.82], "total": 4416.82, "media": 401.53}, {"id": "852", "nome": "Escola De Desenvolvimento Barbara Valentin Cardoso", "meses": [0, 0, 777.04, 547.02, 786.94, 547.02, 786.94, 777.04, 547.02, 777.04, 547.02, 786.94], "total": 6880.02, "media": 688.0}, {"id": "853", "nome": "Mr Consultorio Odontologico Ltda", "meses": [0, 317.0, 317.0, 417.01, 556.92, 777.04, 547.02, 547.02, 547.02, 547.02, 777.04, 417.0], "total": 5767.09, "media": 524.28}, {"id": "855", "nome": "Danielle Rezende Pessoa Cunha Ltda", "meses": [0, 0, 317.0, 547.02, 547.02, 417.01, 547.02, 417.01, 547.02, 556.92, 336.8, 417.02], "total": 4649.84, "media": 464.98}, {"id": "856", "nome": "P Brizola Servicos Medicos", "meses": [0, 0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 3170.0, "media": 317.0}, {"id": "857", "nome": "Crelier Servicos Medicos", "meses": [0, 0, 0, 317.0, 417.01, 417.01, 0, 206.72, 547.02, 547.02, 547.02, 417.01], "total": 3415.81, "media": 426.98}, {"id": "859", "nome": "Tudo E Luz", "meses": [0, 0, 317.0, 317.0, 417.01, 317.0, 0, 317.0, 0, 0, 0, 0], "total": 1685.01, "media": 337.0}, {"id": "860", "nome": "Falcon Servicos", "meses": [0, 0, 317.0, 317.0, 317.0, 1087.06, 1267.08, 1559.57, 1483.74, 1592.07, 1483.74, 983.7], "total": 10407.96, "media": 1040.8}, {"id": "861", "nome": "W&c Solucoes E Servicos Ltda", "meses": [0, 0, 317.0, 317.0, 377.0, 317.0, 317.0, 317.0, 317.0, 0, 0, 0], "total": 2279.0, "media": 325.57}, {"id": "862", "nome": "Luciana Theodoro Servicos Psicologicos", "meses": [0, 0, 0, 0, 0, 978.36, 693.06, 744.34, 744.34, 978.36, 744.34, 978.36], "total": 5861.16, "media": 837.31}, {"id": "863", "nome": "Benedetti Psicologia", "meses": [0, 0, 0, 0, 0, 744.34, 603.63, 1266.38, 1554.41, 1554.41, 1554.41, 1554.41], "total": 8831.99, "media": 1261.71}, {"id": "864", "nome": "A & B Psicologos Associados", "meses": [0, 0, 0, 0, 1977.14, 0, 0, 0, 0, 0, 0, 0], "total": 1977.14, "media": 1977.14}, {"id": "865", "nome": "Doctor I.r. Medical Assist", "meses": [0, 0, 0, 317.0, 317.0, 0, 0, 0, 0, 0, 0, 0], "total": 634.0, "media": 317.0}, {"id": "866", "nome": "Lara Garrido Estetica E Odontologia Ltda", "meses": [0, 0, 0, 0, 317.0, 317.0, 777.04, 777.04, 777.04, 0, 0, 0], "total": 2965.12, "media": 593.02}, {"id": "867", "nome": "Alexinil Velozo Vaz Mibelli", "meses": [0, 0, 0, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58, 592.58], "total": 5333.22, "media": 592.58}, {"id": "868", "nome": "Centro Odontologico Alexinil Vaz Mibielli Ltda", "meses": [0, 0, 230.02, 317.02, 655.35, 655.35, 655.35, 885.37, 885.37, 885.37, 885.37, 885.37], "total": 6939.94, "media": 693.99}, {"id": "869", "nome": "Grupo Atencao", "meses": [0, 0, 0, 1167.07, 1708.72, 2208.76, 1958.74, 1958.74, 1828.73, 1958.74, 2218.66, 2165.64], "total": 17173.8, "media": 1908.2}, {"id": "870", "nome": "Gabriel Daher Servicos Medicos Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0], "total": 634.0, "media": 317.0}, {"id": "871", "nome": "Suzana Rodrigues Psicologia Infanto-Juvenil Ltda", "meses": [0, 0, 0, 0, 0, 0, 827.04, 827.04, 827.04, 1087.0, 827.04, 827.04], "total": 5222.2, "media": 870.37}, {"id": "872", "nome": "Vhiver+", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 417.01, 417.01, 417.01, 417.01, 417.01], "total": 3036.05, "media": 379.51}, {"id": "873", "nome": "Stein - Saude Especializada", "meses": [0, 0, 0, 317.0, 417.01, 417.03, 417.01, 417.01, 417.05, 417.01, 417.01, 547.02], "total": 3783.15, "media": 420.35}, {"id": "874", "nome": "4N Nucleo De Nutricao", "meses": [0, 0, 0, 0, 547.02, 417.01, 547.03, 417.01, 547.02, 617.01, 617.01, 547.0], "total": 4256.11, "media": 532.01}, {"id": "875", "nome": "Dr Sandra Ferreira Fisioterapia Pelvica", "meses": [0, 0, 0, 0, 317.0, 417.01, 417.02, 417.01, 417.01, 417.01, 417.01, 417.01], "total": 3236.08, "media": 404.51}, {"id": "876", "nome": "Clinica Podium", "meses": [0, 0, 0, 0, 317.0, 317.0, 616.0, 716.01, 716.04, 417.01, 547.02, 677.03], "total": 4323.11, "media": 540.39}, {"id": "877", "nome": "Gkb Consultancy", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0, 1407.09, 1087.06, 1087.06], "total": 5166.21, "media": 645.78}, {"id": "878", "nome": "Dantas De Castro Servicos Medicos", "meses": [0, 0, 0, 0, 317.0, 317.0, 547.02, 547.02, 547.02, 547.02, 547.02, 547.02], "total": 3916.12, "media": 489.51}, {"id": "880", "nome": "Jose Geraldo Do Nascimento Filho", "meses": [0, 0, 0, 0, 247.0, 0, 0, 0, 0, 0, 0, 0], "total": 247.0, "media": 247.0}, {"id": "881", "nome": "Klever Teixeira Lisboa Sociedade Individual De Advocacia", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 677.0, 417.01, 547.02, 677.03, 807.04], "total": 4076.1, "media": 509.51}, {"id": "882", "nome": "Mf Fisioterapia E Reabilitacao", "meses": [0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 737.03], "total": 2639.03, "media": 377.0}, {"id": "883", "nome": "Escola De Tecnologia Master", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 0, 0, 0, 0, 300.0], "total": 1251.0, "media": 312.75}, {"id": "884", "nome": "Soares Fonoaudiologia Integrada Ltda", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 417.01, 807.04, 417.04, 417.01], "total": 3326.1, "media": 415.76}, {"id": "885", "nome": "Clinica Monteroquiroz", "meses": [0, 0, 0, 0, 417.0, 417.13, 517.02, 517.01, 647.02, 517.01, 417.0, 517.01], "total": 3966.2, "media": 495.77}, {"id": "886", "nome": "Emerdente", "meses": [0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 417.01, 417.01, 417.01, 417.03], "total": 2936.06, "media": 367.01}, {"id": "887", "nome": "Camilla Riccioppo Nutrologia", "meses": [0, 0, 0, 0, 0, 317.0, 417.01, 417.11, 417.01, 417.01, 417.1, 417.08], "total": 2819.32, "media": 402.76}, {"id": "888", "nome": "Cat's House Ltda", "meses": [0, 0, 0, 0, 0, 0, 755.36, 755.37, 1069.13, 647.03, 647.03, 317.0], "total": 4190.92, "media": 698.49}, {"id": "889", "nome": "Evf Gestao Integrada Ltda", "meses": [0, 0, 0, 0, 0, 317.0, 377.0, 377.0, 377.0, 377.0, 377.0, 377.0], "total": 2579.0, "media": 368.43}, {"id": "890", "nome": "Corpo Em Sincronia", "meses": [0, 0, 0, 0, 0, 317.0, 655.35, 525.34, 525.34, 525.34, 525.34, 525.34], "total": 3599.05, "media": 514.15}, {"id": "891", "nome": "Fernanda Dantas Servicos Medicos", "meses": [0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 417.01, 417.01, 417.01, 317.0], "total": 2519.03, "media": 359.86}, {"id": "892", "nome": "Mv Reabilitacao E Performance", "meses": [0, 0, 0, 0, 0, 317.0, 417.01, 317.03, 317.0, 417.01, 417.01, 417.01], "total": 2619.07, "media": 374.15}, {"id": "893", "nome": "Odontologia Integrada Joao Caetano", "meses": [0, 0, 0, 0, 0, 0, 547.02, 797.02, 667.01, 547.02, 547.02, 417.01], "total": 3522.1, "media": 587.02}, {"id": "894", "nome": "Kamila Carvalho Servicos De Psicologia", "meses": [0, 0, 0, 0, 0, 0, 217.0, 417.01, 417.01, 417.01, 417.01, 417.01], "total": 2302.05, "media": 383.68}, {"id": "895", "nome": "Clinica Shaibo", "meses": [0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 533.66, 633.68, 763.89, 763.69], "total": 3645.92, "media": 520.85}, {"id": "896", "nome": "Luana Filgueiras Fisioterapia", "meses": [0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 2219.0, "media": 317.0}, {"id": "898", "nome": "Clinica Shaibo", "meses": [0, 0, 0, 0, 0, 637.03, 1043.7, 827.04, 577.02, 577.02, 317.19, 0], "total": 3979.0, "media": 663.17}, {"id": "899", "nome": "Bruno Ramos Marinho Sociedade Individual De Advocacia", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 1585.0, "media": 317.0}, {"id": "900", "nome": "Ana Carolina Leao Nutricao E Saude", "meses": [0, 0, 0, 0, 0, 317.0, 417.01, 317.0, 417.01, 317.0, 317.0, 317.0], "total": 2419.02, "media": 345.57}, {"id": "901", "nome": "Saude Data Informacoes", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1523.74], "total": 1523.74, "media": 1523.74}, {"id": "904", "nome": "Centro Clinico Real", "meses": [0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0, 317.0, 547.02], "total": 2449.02, "media": 349.86}, {"id": "905", "nome": "Integrale Odontologia", "meses": [0, 0, 0, 0, 0, 0, 0, 547.02, 777.04, 417.01, 777.04, 417.02], "total": 2935.13, "media": 587.03}, {"id": "906", "nome": "Figueiredo Ormond Servicos Medicos Ltda", "meses": [0, 0, 0, 0, 0, 0, 317.0, 716.01, 716.01, 417.01, 417.01, 417.01], "total": 3000.05, "media": 500.01}, {"id": "907", "nome": "Rp Odontologia", "meses": [0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 547.02, 777.04, 777.04], "total": 3052.1, "media": 508.68}, {"id": "908", "nome": "Domo Vita Saude E Bem Estar Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 184.01, 533.67, 533.96], "total": 1251.64, "media": 417.21}, {"id": "910", "nome": "Centro Terapeutico Comunicar", "meses": [0, 0, 0, 0, 0, 0, 0, 2052.11, 2160.44, 2160.44, 2160.44, 1293.8], "total": 9827.23, "media": 1965.45}, {"id": "911", "nome": "Braganca Servicos Medicos", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 547.02, 547.02, 417.01], "total": 2145.05, "media": 429.01}, {"id": "912", "nome": "Jorge Da Costa Pereira", "meses": [0, 0, 0, 0, 0, 0, 0, 397.0, 397.0, 397.0, 397.0, 397.0], "total": 1985.0, "media": 397.0}, {"id": "913", "nome": "Elmo Franca Oliveira", "meses": [0, 0, 0, 0, 0, 0, 0, 609.33, 397.0, 0, 184.66, 397.0], "total": 1587.99, "media": 397.0}, {"id": "914", "nome": "Anesthseven", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 1585.0, "media": 317.0}, {"id": "915", "nome": "Medprime Medicina E Saude Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 417.01, 547.02, 417.01, 417.01, 417.01], "total": 2215.06, "media": 443.01}, {"id": "916", "nome": "Jegandre", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 417.01, 550.16, 680.02, 910.04], "total": 2874.23, "media": 574.85}, {"id": "917", "nome": "Servicos Medicos Souza Freitas Gouveia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 0, 734.01, 317.0, 317.0], "total": 1685.01, "media": 421.25}, {"id": "918", "nome": "Generali Med", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 1460.38, 1698.72, 1568.71, 1622.89], "total": 6350.7, "media": 1587.68}, {"id": "919", "nome": "Saude Popular Bangu", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 525.34, 525.34, 525.34, 525.34], "total": 2101.36, "media": 525.34}, {"id": "920", "nome": "Luciene Mota Da Cruz", "meses": [0, 0, 0, 0, 0, 0, 0, 397.0, 397.0, 397.0, 397.0, 397.0], "total": 1985.0, "media": 397.0}, {"id": "921", "nome": "Avee", "meses": [0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0, 317.0], "total": 1585.0, "media": 317.0}, {"id": "922", "nome": "Kc Face", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 417.01, 417.12, 417.01], "total": 1568.14, "media": 392.03}, {"id": "923", "nome": "Fisio Soul Fisioterapia E Microfisioterapia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 163.5, 547.02, 677.03, 0], "total": 1387.55, "media": 462.52}, {"id": "925", "nome": "Msproativamente Neuro", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 417.01, 417.01, 515.51], "total": 1349.53, "media": 449.84}, {"id": "926", "nome": "Paula Luz Fisioterapia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0, 317.0], "total": 1268.0, "media": 317.0}, {"id": "927", "nome": "Connecting Digital Minds Ltda.", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 377.0, 377.0, 377.0, 377.0], "total": 1508.0, "media": 377.0}, {"id": "928", "nome": "Ifcdj Engenharia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 417.01, 547.02, 417.01, 406.2], "total": 1787.24, "media": 446.81}, {"id": "929", "nome": "Fernanda Machado - Nutricionista Esportivo", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 677.03, 677.03, 547.02], "total": 1901.08, "media": 633.69}, {"id": "930", "nome": "Clinica De Fonoaudiologia Luciana Sampaio Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 0, "media": 0}, {"id": "931", "nome": "Eliana Guerra De Alencar", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 397.0, 397.0, 397.0, 397.0], "total": 1588.0, "media": 397.0}, {"id": "932", "nome": "A.n Odontologia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 0, 417.01, 417.08], "total": 1151.09, "media": 383.7}, {"id": "933", "nome": "Luciana Antonio Sampaio Lima", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 0, "media": 0}, {"id": "935", "nome": "Zona Laboratorio Criativo Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 742.67, 742.69], "total": 1485.36, "media": 742.68}, {"id": "936", "nome": "Hlmp Solutions Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 477.01, 477.01, 377.0], "total": 1648.02, "media": 412.0}, {"id": "937", "nome": "Giselle Lima Consultoria Maritima Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 377.0, 317.0, 317.0], "total": 1328.0, "media": 332.0}, {"id": "938", "nome": "Machado Comunicacao Digital Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 427.01, 377.0, 427.01], "total": 1231.02, "media": 410.34}, {"id": "939", "nome": "Lm Gomes", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0], "total": 951.0, "media": 317.0}, {"id": "940", "nome": "Viva Saude Diagnosticos E Vacinas Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 615.5, 615.5, 317.0], "total": 1548.0, "media": 516.0}, {"id": "941", "nome": "Fms Atendimento Medico E Ambulatorial Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 547.0, 677.0], "total": 1224.0, "media": 612.0}, {"id": "942", "nome": "60Enova", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 377.0, 377.0], "total": 1388.0, "media": 347.0}, {"id": "943", "nome": "Sorria Luzia Matriodontologia E Odontopediatria Clinica", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 417.01, 417.01, 417.16], "total": 1251.18, "media": 417.06}, {"id": "944", "nome": "Mm Psicologia E Bem-Estar Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 325.14], "total": 959.14, "media": 319.71}, {"id": "946", "nome": "Marina Da Conceicao Santoro", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 592.58, 592.58, 592.58], "total": 1777.74, "media": 592.58}, {"id": "947", "nome": "Mgma Logistics Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 477.01, 427.01], "total": 1221.02, "media": 407.01}, {"id": "948", "nome": "Instituto Plenavita", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0, 317.0], "total": 951.0, "media": 317.0}, {"id": "949", "nome": "Cat's House", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 739.1, 839.11, 739.1], "total": 2317.31, "media": 772.44}, {"id": "950", "nome": "Clinica Dra. Claudia Prucoli", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 993.7, 993.7], "total": 1987.4, "media": 993.7}, {"id": "953", "nome": "G F Camanho Scoralick Fisioterapia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 637.03], "total": 954.03, "media": 477.01}, {"id": "955", "nome": "Joao Paulo Menezes Da Silva", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 577.02, 317.0], "total": 894.02, "media": 447.01}, {"id": "956", "nome": "Gabi Santarem Fisioterapia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1087.06, 827.04], "total": 1914.1, "media": 957.05}, {"id": "957", "nome": "Sandro Coelho Ti Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 427.01], "total": 744.01, "media": 372.0}, {"id": "958", "nome": "Instituto Agalma - Ensino E Formacao Em Saude Mental Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0], "total": 317.0, "media": 317.0}, {"id": "959", "nome": "Espaco Mosna Odontologia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 655.35, 885.45], "total": 1540.8, "media": 770.4}, {"id": "960", "nome": "Helaine Housy Nobrega Barros De Oliveira", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 397.0, 397.0, 397.0], "total": 1191.0, "media": 397.0}, {"id": "961", "nome": "Pchad Servicos De Saude", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 417.01], "total": 417.01, "media": 417.01}, {"id": "964", "nome": "Jb Fisioterapia E Educacao Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0, 317.0], "total": 634.0, "media": 317.0}, {"id": "965", "nome": "Lu Vianna Fisio & Terapias Holisticas Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 417.01], "total": 417.01, "media": 417.01}, {"id": "967", "nome": "Scale Levantamentos Arquitetonicos E Arquitetura Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 417.01, 417.01], "total": 834.02, "media": 417.01}, {"id": "968", "nome": "Gjbf Consultoria E Montagem De Equipamentos Industriais Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 285.3, 285.3], "total": 570.6, "media": 285.3}, {"id": "970", "nome": "East Clinic", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1970.39, 2320.39], "total": 4290.78, "media": 2145.39}, {"id": "972", "nome": "Amanda Lopes Nutricionista", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 375.31, 375.31], "total": 750.62, "media": 375.31}, {"id": "973", "nome": "Melyse Cardoso Ribeiro Coutinho Sociedade Individual De Advocacia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0], "total": 317.0, "media": 317.0}, {"id": "976", "nome": "Vd Ensino Em Fisioterapia E Osteopatia", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 777.04], "total": 777.04, "media": 777.04}, {"id": "978", "nome": "Alheira & Mendonca Servicos Medicos", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1835.45], "total": 1835.45, "media": 1835.45}, {"id": "979", "nome": "U C Bay Market Servicos De Beleza Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 371.17], "total": 371.17, "media": 371.17}, {"id": "980", "nome": "Denise Martin De Moraes Avallone Servicos De Fisioterapia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 301.15], "total": 301.15, "media": 301.15}, {"id": "983", "nome": "Mariana Braga De Vasconcelos", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 397.0, 0], "total": 397.0, "media": 397.0}, {"id": "991", "nome": "Juliana Porto Servicos De Psicologia Ltda", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 317.0], "total": 317.0, "media": 317.0}, {"id": "70004", "nome": "Rutelena De Lacerda Simas", "meses": [111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 0, 0], "total": 1119.9, "media": 111.99}, {"id": "70007", "nome": "Maria Helena De Mattos Couto", "meses": [381.28, 381.28, 381.31, 381.28, 396.28, 381.28, 381.28, 381.28, 381.28, 381.28, 381.28, 381.28], "total": 4590.39, "media": 382.53}, {"id": "70008", "nome": "Celia De Souza Lins", "meses": [124.12, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 111.99, 124.12, 111.99, 111.99, 111.99], "total": 1368.14, "media": 114.01}, {"id": "70011", "nome": "Viviane Vargas De Almeida", "meses": [115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.25, 230.48], "total": 1498.13, "media": 124.84}, {"id": "70012", "nome": "Mônica Damasceno", "meses": [249.68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "total": 249.68, "media": 249.68}, {"id": "70016", "nome": "Marcelo Martins Farias", "meses": [138.29, 115.24, 115.24, 115.24, 115.3, 115.24, 0, 0, 0, 0, 0, 0], "total": 714.55, "media": 119.09}, {"id": "70017", "nome": "Lucia Catarina Da Silva Rego", "meses": [115.24, 115.24, 115.24, 115.24, 138.29, 115.24, 115.24, 115.24, 115.24, 115.31, 115.24, 230.59], "total": 1521.35, "media": 126.78}, {"id": "70021", "nome": "Denise Peçanha Ferraz", "meses": [0, 279.98, 279.98, 0, 0, 279.98, 0, 0, 0, 0, 0, 0], "total": 839.94, "media": 279.98}, {"id": "70024", "nome": "Eliane Lima Barreto", "meses": [115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.25, 230.48], "total": 1498.13, "media": 124.84}, {"id": "70025", "nome": "Maristela Guimarães", "meses": [129.26, 129.26, 129.26, 140.79, 152.31, 129.26, 129.26, 129.26, 129.26, 129.27, 129.26, 244.5], "total": 1700.95, "media": 141.75}, {"id": "70026", "nome": "Waldir Malheiros", "meses": [115.24, 115.24, 115.24, 115.25, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 230.48], "total": 1498.13, "media": 124.84}, {"id": "70027", "nome": "Alcir Da Silva", "meses": [115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 230.48, 230.48, 230.48, 230.48, 345.72], "total": 2074.32, "media": 172.86}, {"id": "70028", "nome": "Maria Lucia Valporto Peyroton", "meses": [403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21, 403.21], "total": 4838.52, "media": 403.21}, {"id": "70030", "nome": "Lenisa Martins Ferrato", "meses": [115.24, 149.81, 115.24, 161.34, 115.24, 115.24, 115.24, 115.27, 115.24, 115.24, 115.24, 276.59], "total": 1624.93, "media": 135.41}, {"id": "70032", "nome": "Diogo Alves Da Conceicao", "meses": [115.24, 115.24, 115.24, 115.25, 115.24, 115.24, 138.29, 115.24, 115.24, 115.24, 115.24, 230.47], "total": 1521.17, "media": 126.76}, {"id": "70033", "nome": "Ana Carolina Galeano (Empregadora Doméstica)", "meses": [115.24, 114.76, 115.24, 126.76, 126.76, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 230.48], "total": 1520.68, "media": 126.72}, {"id": "70036", "nome": "Leonardo Miranda Bertino", "meses": [115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 115.24, 230.48], "total": 1498.12, "media": 124.84}, {"id": "70039", "nome": "Mariangela Barbi Gonçalves", "meses": [169.36, 169.36, 169.36, 169.36, 169.36, 169.36, 0, 0, 0, 0, 0, 0], "total": 1016.16, "media": 169.36}, {"id": "70041", "nome": "Rodrigo Do Carmo Magarotto", "meses": [158.56, 147.78, 147.81, 136.99, 136.99, 137.02, 147.78, 137.06, 147.78, 147.81, 137.01, 273.98], "total": 1856.57, "media": 154.71}, {"id": "70043", "nome": "Larissa Mendes De Queiroz", "meses": [201.72, 201.72, 169.36, 169.36, 169.36, 169.36, 169.36, 169.36, 169.36, 169.36, 169.36, 338.72], "total": 2266.4, "media": 188.87}, {"id": "70044", "nome": "Haydee Gabay Maia Castro", "meses": [147.78, 137.02, 136.99, 137.01, 136.99, 0, 137.14, 273.98, 0, 0, 0, 0], "total": 1106.91, "media": 158.13}, {"id": "70046", "nome": "Bernardo Ferreira Castro", "meses": [136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 136.99, 273.98], "total": 1780.87, "media": 148.41}, {"id": "70047", "nome": "Rosane Lopes Portes Mendes", "meses": [0, 0, 0, 0, 197.0, 197.0, 197.0, 197.0, 197.0, 0, 0, 0], "total": 985.0, "media": 197.0}, {"id": "70048", "nome": "Marcelo Santos De Oliva", "meses": [0, 0, 0, 0, 0, 0, 197.0, 197.0, 197.0, 0, 0, 0], "total": 591.0, "media": 197.0}, {"id": "70049", "nome": "Simone Silva Lima", "meses": [0, 0, 0, 0, 0, 0, 0, 147.0, 147.16, 147.14, 147.0, 147.49], "total": 735.79, "media": 147.16}, {"id": "70050", "nome": "Deise Pereira Franco", "meses": [0, 0, 0, 0, 0, 0, 0, 177.3, 177.3, 177.3, 177.3, 177.3], "total": 886.5, "media": 177.3}, {"id": "70051", "nome": "Leonilda Augusta Da Silva Pires", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 197.0, 197.0, 197.09], "total": 591.09, "media": 197.03}, {"id": "70052", "nome": "Leandro Pereira Rangel", "meses": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197.0, 197.0], "total": 394.0, "media": 197.0}];
+
+function rcFmt(v){
+  if(!v||v===0)return '—';
+  return 'R$\u00a0'+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+
+function rcLoad(){
+  try{const s=localStorage.getItem('s_rc');if(s)return JSON.parse(s);}catch(e){}
+  return JSON.parse(JSON.stringify(RC_ORIG));
+}
+
+let rcData=rcLoad();
+
+function rcSave(){
+  try{
+    localStorage.setItem('s_rc',JSON.stringify(rcData));
+    const m=document.getElementById('smsg-rc');
+    if(m){m.classList.add('on');setTimeout(function(){m.classList.remove('on');},2000);}
+  }catch(e){alert('Erro ao salvar.');}
+}
+
+function rcFilter(){
+  rcRender();
+}
+
+function rcAdd(){
+  rcData.push({id:'',nome:'',meses:[0,0,0,0,0,0,0,0,0,0,0,0],total:0,media:0});
+  document.getElementById('rc-search').value='';
+  rcRender();
+  setTimeout(function(){
+    var rows=document.querySelectorAll('#rc-tbody tr:not(.rc-sum)');
+    if(rows.length>0){var inp=rows[rows.length-1].querySelector('input');if(inp)inp.focus();}
+  },50);
+}
+
+function rcDel(idx){
+  if(!confirm('Remover este cliente?'))return;
+  rcData.splice(idx,1);
+  rcRender();
+}
+
+function rcUpdVal(idx,mi,v){
+  var n=parseFloat(v.replace(/[^\d,.-]/g,'').replace(',','.'))||0;
+  rcData[idx].meses[mi]=n;
+  var tot=rcData[idx].meses.reduce(function(a,x){return a+x;},0);
+  var act=rcData[idx].meses.filter(function(x){return x>0;}).length;
+  rcData[idx].total=Math.round(tot*100)/100;
+  rcData[idx].media=act>0?Math.round(tot/act*100)/100:0;
+  var row=document.querySelector('#rc-tbody tr[data-idx="'+idx+'"]');
+  if(row){
+    row.querySelector('.rc-tot-cell').textContent=rcFmt(rcData[idx].total);
+    row.querySelector('.rc-med-cell').textContent=rcFmt(rcData[idx].media);
+  }
+  rcUpdateSum();
+}
+
+function rcUpdField(idx,field,v){
+  rcData[idx][field]=v;
+}
+
+function rcUpdateSum(){
+  var row=document.getElementById('rc-sumrow');
+  if(!row)return;
+  var tots=new Array(12).fill(0);
+  var grand=0;
+  rcData.forEach(function(c){c.meses.forEach(function(v,i){tots[i]+=v;});grand+=c.total||0;});
+  var cells=row.querySelectorAll('td');
+  for(var i=0;i<12;i++){if(cells[i+2])cells[i+2].textContent=tots[i]>0?rcFmt(tots[i]):'—';}
+  if(cells[14])cells[14].textContent=rcFmt(grand);
+}
+
+function rcRender(){
+  var tbody=document.getElementById('rc-tbody');
+  if(!tbody)return;
+  var q=(document.getElementById('rc-search').value||'').toLowerCase();
+  var filtered=[];
+  rcData.forEach(function(c,i){
+    if(!q||c.id.toLowerCase().indexOf(q)>=0||c.nome.toLowerCase().indexOf(q)>=0)
+      filtered.push({c:c,i:i});
+  });
+  var cnt=document.getElementById('rc-count');
+  if(cnt)cnt.textContent=filtered.length+' de '+rcData.length+' clientes';
+  tbody.innerHTML='';
+  filtered.forEach(function(obj){
+    var c=obj.c,idx=obj.i;
+    var tr=document.createElement('tr');
+    tr.setAttribute('data-idx',idx);
+    // id
+    var td1=document.createElement('td');
+    var inp1=document.createElement('input');
+    inp1.className='rc-inp rc-inp-id';inp1.value=c.id;inp1.placeholder='Cód.';
+    inp1.onchange=function(ii){return function(){rcUpdField(ii,'id',this.value);};}(idx);
+    td1.appendChild(inp1);tr.appendChild(td1);
+    // nome
+    var td2=document.createElement('td');
+    var inp2=document.createElement('input');
+    inp2.className='rc-inp rc-inp-nome';inp2.value=c.nome;inp2.placeholder='Nome do cliente';
+    inp2.onchange=function(ii){return function(){rcUpdField(ii,'nome',this.value);};}(idx);
+    td2.appendChild(inp2);tr.appendChild(td2);
+    // meses
+    c.meses.forEach(function(v,mi){
+      var tdm=document.createElement('td');
+      var inpm=document.createElement('input');
+      inpm.className='rc-inp';inpm.value=v>0?v:'';inpm.placeholder='—';
+      inpm.onchange=function(ii,mm){return function(){rcUpdVal(ii,mm,this.value);};}(idx,mi);
+      tdm.appendChild(inpm);tr.appendChild(tdm);
+    });
+    // total
+    var tdt=document.createElement('td');tdt.className='rc-tot-cell';tdt.textContent=rcFmt(c.total);tr.appendChild(tdt);
+    // media
+    var tdm2=document.createElement('td');tdm2.className='rc-med-cell';tdm2.textContent=rcFmt(c.media);tr.appendChild(tdm2);
+    // del
+    var tdd=document.createElement('td');
+    var btn=document.createElement('button');btn.className='rc-del';btn.textContent='✕';
+    btn.onclick=function(ii){return function(){rcDel(ii);};}(idx);
+    tdd.appendChild(btn);tr.appendChild(tdd);
+    tbody.appendChild(tr);
+  });
+  // sum row
+  var tots=new Array(12).fill(0);var grand=0;
+  rcData.forEach(function(c){c.meses.forEach(function(v,i){tots[i]+=v;});grand+=c.total||0;});
+  var sumtr=document.createElement('tr');sumtr.className='rc-sum';sumtr.id='rc-sumrow';
+  var s1=document.createElement('td');s1.textContent=rcData.length;s1.style.textAlign='center';sumtr.appendChild(s1);
+  var s2=document.createElement('td');s2.textContent='TOTAL GERAL';s2.style.fontFamily='DM Sans,sans-serif';sumtr.appendChild(s2);
+  tots.forEach(function(v){
+    var td=document.createElement('td');td.textContent=v>0?rcFmt(v):'—';sumtr.appendChild(td);
+  });
+  var stot=document.createElement('td');stot.className='rc-tot-cell';stot.textContent=rcFmt(grand);sumtr.appendChild(stot);
+  var smed=document.createElement('td');smed.textContent='—';sumtr.appendChild(smed);
+  var sdel=document.createElement('td');sumtr.appendChild(sdel);
+  tbody.appendChild(sumtr);
+}
+
+function rcInit(){
+  rcData=rcLoad();
+  rcRender();
+}
+
+
+// ── NAVIGATION ──
+function showSec(n,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+n).classList.add('on');
+  el.classList.add('on');
+}
+function saveSec(n){
+  const map={margem:'s_mg',taxas:'s_tx',multas:'s_ml',relatorio:'s_rl'};
+  const dat={margem:mData,taxas:tData,multas:mulData,relatorio:relData};
+  localStorage.setItem(map[n],JSON.stringify(dat[n]));if(n==='relatorio')localStorage.setItem('s_rl_v','3');
+  const m=document.getElementById('smsg-'+n);m.classList.add('on');setTimeout(()=>m.classList.remove('on'),2500);
+}
+function showMTab(sec,mi){
+  document.querySelectorAll('#mpanels-'+sec+' .mpanel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#mtabs-'+sec+' .mtab').forEach(t=>t.classList.remove('on'));
+  const p=document.getElementById('mpanel-'+sec+'-'+mi);if(p)p.classList.add('on');
+  const tabs=document.querySelectorAll('#mtabs-'+sec+' .mtab');if(tabs[mi])tabs[mi].classList.add('on');
+}
+
+// ── HELPERS ──
+function brl(v){if(v===null||v===undefined||isNaN(v))return'—';const n=v<0;return(n?'-':'')+'R$ '+Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+function pct(v){if(v===null||isNaN(v))return'—';return v.toFixed(2).replace('.',',')+' %';}
+function pv(s){if(!s||s.trim()===''||s==='—')return null;return parseFloat(s.replace(/[R$\s.]/g,'').replace(',','.'))||null;}
+function mg(r,d){if(!r||!d)return null;return((r-d)/r)*100;}
+
+// ════════════════════════════════
+// MARGEM
+// ════════════════════════════════
+const MD0={
+  0:{CNES:{r:107980.50,d:96933.04,g:-8190,a:0},'Regulatório':{r:40984.64,d:32507.17,g:8477.47,a:0},'Licenças':{r:57397.88,d:51284.29,g:3798.68,a:0},Sampali:{r:378124.28,d:217822.53,g:152084.4,a:42000}},
+  1:{CNES:{r:119054.27,d:84298.56,g:8478.6,a:0},'Regulatório':{r:35801.51,d:15272.22,g:20529.29,a:0},'Licenças':{r:37609.81,d:51911.9,g:17707.52,a:0},Sampali:{r:329171.32,d:283351.07,g:8862.12,a:101305.39}},
+  2:{CNES:{r:127213.95,d:111573.75,g:6437.31,a:4836.67},'Regulatório':{r:49943.45,d:48212.84,g:1730.61,a:18870.37},'Licenças':{r:67214.97,d:47153.59,g:16643.07,a:0},Sampali:{r:353852.92,d:258819.46,g:37688.54,a:46024.66}},
+  3:{CNES:{r:129273.48,d:116864.29,g:8613.57,a:8613.57},'Regulatório':{r:37174.74,d:33296.15,g:3878.59,a:3199.45},'Licenças':{r:39584.78,d:59434.23,g:-23035.43,a:0},Sampali:{r:323597.98,d:286435.04,g:24090.72,a:24090.72}}
+};
+function loadMD(){try{const s=localStorage.getItem('s_mg');if(s)return JSON.parse(s);}catch(e){}
+  const d={};MES.forEach((_,i)=>{d[i]={};EMPS.forEach(e=>{d[i][e]=(MD0[i]&&MD0[i][e])||{r:null,d:null,g:null,a:null};});});return d;}
+let mData=loadMD();
+
+function mSum(mi){let R=0,D=0;EMPS.forEach(e=>{const x=mData[mi][e];if(x.r)R+=x.r;if(x.d)D+=x.d;});return{R,D,L:R-D,M:R?((R-D)/R)*100:null};}
+
+function initMargem(){
+  const tc=document.getElementById('mtabs-margem');
+  const pc=document.getElementById('mpanels-margem');
+  MES.forEach((m,i)=>{
+    const t=document.createElement('button');t.className='mtab';t.textContent=m.substring(0,3);
+    t.onclick=(()=>{const idx=i;return()=>showMTab('margem',idx);})();
+    if(EMPS.some(e=>mData[i][e].r!==null))t.classList.add('hd');
+    tc.appendChild(t);
+    const p=document.createElement('div');p.className='mpanel';p.id='mpanel-margem-'+i;pc.appendChild(p);
+    renderMargemPanel(i);
+  });
+  showMTab('margem',0);
+  renderAtMg();
+}
+
+function renderMargemPanel(mi){
+  const p=document.getElementById('mpanel-margem-'+mi);if(!p)return;
+  const s=mSum(mi);const hd=EMPS.some(e=>mData[mi][e].r!==null);
+  let html=`<div class="cards">
+    <div class="card"><div class="clbl">Receita Total</div><div class="cval ct" id="mr-${mi}">${hd?brl(s.R):'—'}</div></div>
+    <div class="card"><div class="clbl">Despesa Total</div><div class="cval cy" id="md-${mi}">${hd?brl(s.D):'—'}</div></div>
+    <div class="card"><div class="clbl">Lucro</div><div class="cval ${s.L>=0?'cg':'cr'}" id="ml-${mi}">${hd?brl(s.L):'—'}</div></div>
+    <div class="card"><div class="clbl">Margem Consolidada</div><div class="cval ${s.M!==null?(s.M>=20?'cg':s.M<0?'cr':'cy'):''}" id="mm-${mi}">${s.M!==null?pct(s.M):'—'}</div><div class="csub">Meta: 20%</div></div>
+  </div>
+  <div class="slbl">Detalhamento — ${MES[mi]}</div>
+  <div class="egrid">`;
+  EMPS.forEach(e=>{
+    const ed=mData[mi][e];const L=ed.r!==null&&ed.d!==null?ed.r-ed.d:null;const M=mg(ed.r,ed.d);const GF=ed.g!==null?ed.g+(ed.a||0):null;
+    const mc=M!==null?(M>=20?'mbg-p':M<0?'mbg-n':'mbg-u'):'mbg-u';const ek=e.replace(/\s/g,'_');
+    html+=`<div class="ecard"><div class="ehdr"><div class="ename" style="color:${EC[e]}">${e}</div><div class="mbg ${mc}" id="mb-${mi}-${ek}">${M!==null?pct(M):'—'}</div></div>
+    <div class="ebody">
+      <div class="frow"><span class="flbl">📊 Receita</span><input class="finp" value="${ed.r!==null?brl(ed.r):''}" placeholder="R$ 0,00" onfocus="this.dataset.raw=this.value.replace(/[R$\\s.]/g,'').replace(',','.');this.value=this.dataset.raw" onblur="const v=parseFloat(this.value.replace(',','.'));mUpd(${mi},'${e}','r',isNaN(v)?'':String(v));this.value=isNaN(v)?'':brl(v)" ></div>
+      <div class="frow"><span class="flbl">📊 Despesa</span><input class="finp" value="${ed.d!==null?brl(ed.d):''}" placeholder="R$ 0,00" onfocus="this.dataset.raw=this.value.replace(/[R$\\s.]/g,'').replace(',','.');this.value=this.dataset.raw" onblur="const v=parseFloat(this.value.replace(',','.'));mUpd(${mi},'${e}','d',isNaN(v)?'':String(v));this.value=isNaN(v)?'':brl(v)" ></div>
+      <div class="frow"><span class="flbl">🚀 Lucro</span><div class="fcalc ${L!==null?(L>=0?'cg':'cr'):''}" id="fl-${mi}-${ek}">${L!==null?brl(L):'—'}</div></div>
+      <div class="frow"><span class="flbl">😊 Margem</span><div class="fcalc ${M!==null?(M>=20?'cg':M<0?'cr':'cy'):''}" id="fm-${mi}-${ek}">${M!==null?pct(M):'—'}</div></div>
+      <div class="frow"><span class="flbl">💰 Geração de caixa</span><input class="finp" value="${ed.g!==null?brl(ed.g):''}" placeholder="R$ 0,00" onfocus="this.dataset.raw=this.value.replace(/[R$\\s.]/g,'').replace(',','.');this.value=this.dataset.raw" onblur="const v=parseFloat(this.value.replace(',','.'));mUpd(${mi},'${e}','g',isNaN(v)?'':String(v));this.value=isNaN(v)?'':brl(v)" ></div>
+      <div class="frow"><span class="flbl">💰 Aporte</span><input class="finp" value="${ed.a!==null?brl(ed.a):''}" placeholder="R$ 0,00" onfocus="this.dataset.raw=this.value.replace(/[R$\\s.]/g,'').replace(',','.');this.value=this.dataset.raw" onblur="const v=parseFloat(this.value.replace(',','.'));mUpd(${mi},'${e}','a',isNaN(v)?'':String(v));this.value=isNaN(v)?'':brl(v)" ></div>
+      <div class="frow"><span class="flbl">💰 Geração + Aporte</span><div class="fcalc ${GF!==null?(GF>=0?'ct':'cr'):''}" id="fgf-${mi}-${ek}">${GF!==null?brl(GF):'—'}</div></div>
+    </div></div>`;
+  });
+  html+=`</div><div class="slbl">Gráfico de margem</div><div class="cbox"><div class="bchart" id="bc-${mi}"></div></div>`;
+  p.innerHTML=html;
+  renderBarChart(mi);
+}
+
+function mUpd(mi,emp,f,val){
+  const v=parseFloat(val)||null;
+  mData[mi][emp][f]=v;
+  // Update computed fields only
+  const s=mSum(mi);const hd=EMPS.some(e=>mData[mi][e].r!==null);
+  const mr=document.getElementById('mr-'+mi);if(mr)mr.textContent=hd?brl(s.R):'—';
+  const md=document.getElementById('md-'+mi);if(md)md.textContent=hd?brl(s.D):'—';
+  const lEl=document.getElementById('ml-'+mi);if(lEl){lEl.textContent=hd?brl(s.L):'—';lEl.className='cval '+(s.L>=0?'cg':'cr');}
+  const mEl=document.getElementById('mm-'+mi);if(mEl){mEl.textContent=s.M!==null?pct(s.M):'—';mEl.className='cval '+(s.M!==null?(s.M>=20?'cg':s.M<0?'cr':'cy'):'');}
+  EMPS.forEach(e=>{
+    const ek=e.replace(/\s/g,'_');const ed=mData[mi][e];
+    const L=ed.r!==null&&ed.d!==null?ed.r-ed.d:null;const M=mg(ed.r,ed.d);const GF=ed.g!==null?ed.g+(ed.a||0):null;
+    const fl=document.getElementById('fl-'+mi+'-'+ek);if(fl){fl.textContent=L!==null?brl(L):'—';fl.className='fcalc '+(L!==null?(L>=0?'cg':'cr'):'');}
+    const fm=document.getElementById('fm-'+mi+'-'+ek);if(fm){fm.textContent=M!==null?pct(M):'—';fm.className='fcalc '+(M!==null?(M>=20?'cg':M<0?'cr':'cy'):'');}
+    const fgf=document.getElementById('fgf-'+mi+'-'+ek);if(fgf){fgf.textContent=GF!==null?brl(GF):'—';fgf.className='fcalc '+(GF!==null?(GF>=0?'ct':'cr'):'');}
+    const mb=document.getElementById('mb-'+mi+'-'+ek);if(mb){mb.textContent=M!==null?pct(M):'—';mb.className='mbg '+(M!==null?(M>=20?'mbg-p':M<0?'mbg-n':'mbg-u'):'mbg-u');}
+  });
+  renderBarChart(mi);renderAtMg();
+}
+
+function renderBarChart(mi){
+  const ct=document.getElementById('bc-'+mi);if(!ct)return;ct.innerHTML='';
+  let mx=60;EMPS.forEach(e=>{const m=mg(mData[mi][e].r,mData[mi][e].d);if(m!==null)mx=Math.max(mx,Math.abs(m));});
+  EMPS.forEach(e=>{const m=mg(mData[mi][e].r,mData[mi][e].d);const w=m!==null?Math.min(Math.abs(m)/mx*100,100):0;
+  const col=m!==null&&m<0?'var(--red)':EC[e];
+  const rw=document.createElement('div');rw.className='brow';
+  rw.innerHTML=`<div class="bemp">${e}</div><div class="btrack"><div class="bfill" style="width:${w}%;background:${col}"><span>${m!==null?pct(m):'—'}</span></div><div style="position:absolute;left:${(20/mx)*100}%;top:0;bottom:0;width:2px;background:rgba(255,255,255,.2)"></div></div>`;
+  ct.appendChild(rw);});
+}
+
+function renderAtMg(){
+  document.getElementById('at-mg').innerHTML='';document.getElementById('at-rc').innerHTML='';
+  EMPS.forEach(e=>{
+    const t1=document.createElement('tr'),t2=document.createElement('tr');
+    let c1=`<td style="color:${EC[e]}">${e}</td>`,c2=`<td style="color:${EC[e]}">${e}</td>`;
+    MES.forEach((_,i)=>{const x=mData[i]&&mData[i][e];const m=x?mg(x.r,x.d):null;const r=x?x.r:null;
+    const mc=m!==null?(m>=20?'var(--grn)':m<0?'var(--red)':'var(--ylw)'):'var(--brd)';
+    c1+=`<td style="color:${mc}">${m!==null?pct(m):'—'}</td>`;c2+=`<td style="color:${r!==null?'var(--acc2)':'var(--brd)'}">${r!==null?brl(r):'—'}</td>`;});
+    t1.innerHTML=c1;t2.innerHTML=c2;
+    document.getElementById('at-mg').appendChild(t1);document.getElementById('at-rc').appendChild(t2);
+  });
+}
+
+// ════════════════════════════════
+// TAXAS
+// ════════════════════════════════
+const TD0={
+  sl:[[1411.28,472],[1393.34,466],[1503.97,503],[1497.99,501],[154882.00,518],[null,null],[null,null],[null,null],[null,null],[null,null],[null,null],[null,null]],
+  co:[[11.94,52.62,7.92,35.23],[25.87,4.88,4.95,1.72],[21.89,35.72,12.87,12.38],[71.64,130.28,9.9,103.39],[226.86,765.12,8.91,683.50],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]],
+  so:[[57.71,842.26,79.2,1921.74],[47.76,606.99,104.94,1154.63],[65.67,1207.29,171.27,2527.9],[63.68,701.88,92.07,1484.26],[55.72,327.68,88.11,0],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]],
+  cn:[[471.63,706.73,10.89,883.85],[451.73,1511.39,75.24,2966.3],[583.07,1481.27,90.09,2564.31],[525.36,1378.17,41.58,2389.41],[519.39,984.33,47.52,1484.63],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]],
+  rg:[[101.49,877.85,2.94,264.76],[65.67,940.3,55.86,256.27],[75.62,1364.58,41.16,993.1],[87.56,846.56,20.58,377.56],[73.63,1142.57,19.11,440.34],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]]
+};
+function loadTD(){try{const s=localStorage.getItem('s_tx');if(s)return JSON.parse(s);}catch(e){}return JSON.parse(JSON.stringify(TD0));}
+let tData=loadTD();
+
+function initTaxas(){
+  renderSL();renderAsaas('co','tb-co','sum-co');renderAsaas('so','tb-so','sum-so');renderAsaas('cn','tb-cn','sum-cn');renderAsaas('rg','tb-rg','sum-rg');
+  const vs=['sum-sl','sum-co','sum-so','sum-cn','sum-rg'].map(id=>pv(document.getElementById(id).textContent));
+  document.getElementById('sum-tt').textContent=brl(vs.reduce((a,b)=>a+(b||0),0));
+}
+
+function renderSL(){
+  const tb=document.getElementById('tb-sl');tb.innerHTML='';let tT=0,tB=0,cT=0,cB=0;
+  tData.sl.forEach((r,i)=>{const tr=document.createElement('tr');if(r[0]===null)tr.classList.add('emp');
+  tr.innerHTML=`<td class="mc">${MES[i]}</td><td><input class="editable" data-k="sl" data-r="${i}" data-c="0" value="${r[0]!==null?brl(r[0]):''}" placeholder="R$ 0,00" onchange="tUpd(this)" onfocus="this.value=this.value.replace(/[R$\\s.]/g,'').replace(',','.')" onblur="this.value=this.value?brl(parseFloat(this.value)):''"></td><td><input class="editable" data-k="sl" data-r="${i}" data-c="1" value="${r[1]!==null?r[1]:''}" placeholder="0" onchange="tUpd(this)"></td>`;
+  tb.appendChild(tr);if(r[0]!==null){tT+=r[0];cT++;}if(r[1]!==null){tB+=r[1];cB++;}});
+  tb.appendChild(Object.assign(document.createElement('tr'),{className:'tr',innerHTML:`<td>Total</td><td style="text-align:right">${brl(tT)}</td><td style="text-align:right">${tB}</td>`}));
+  tb.appendChild(Object.assign(document.createElement('tr'),{className:'mr',innerHTML:`<td>Média</td><td style="text-align:right">${cT?brl(tT/cT):'—'}</td><td style="text-align:right">${cB?Math.round(tB/cB):'—'}</td>`}));
+  document.getElementById('sum-sl').textContent=brl(tT);document.getElementById('sum-sl-b').textContent=tB+' boletos pagos';
+}
+
+function renderAsaas(k,tid,sid){
+  const tb=document.getElementById(tid);tb.innerHTML='';let tots=[0,0,0,0],cnts=[0,0,0,0],tG=0;
+  tData[k].forEach((r,i)=>{const hd=r[0]!==null;const rt=hd?r.reduce((a,b)=>a+(b||0),0):null;if(rt!==null)tG+=rt;
+  const tr=document.createElement('tr');if(!hd)tr.classList.add('emp');
+  let cs=`<td class="mc">${MES[i]}</td>`;
+  r.forEach((v,ci)=>{cs+=`<td><input class="editable" data-k="${k}" data-r="${i}" data-c="${ci}" value="${v!==null?brl(v):''}" placeholder="R$ 0,00" onchange="tUpd(this)" onfocus="this.value=this.value.replace(/[R$\\s.]/g,'').replace(',','.')" onblur="this.value=this.value?brl(parseFloat(this.value)):''"></td>`;if(v!==null){tots[ci]+=v;cnts[ci]++;}});
+  cs+=`<td class="tc">${rt!==null?brl(rt):'—'}</td>`;tr.innerHTML=cs;tb.appendChild(tr);});
+  tb.appendChild(Object.assign(document.createElement('tr'),{className:'tr',innerHTML:`<td>Total</td>${tots.map(v=>`<td style="text-align:right">${brl(v)}</td>`).join('')}<td style="text-align:right">${brl(tG)}</td>`}));
+  tb.appendChild(Object.assign(document.createElement('tr'),{className:'mr',innerHTML:`<td>Média</td>${tots.map((v,i)=>`<td style="text-align:right">${cnts[i]?brl(v/cnts[i]):'—'}</td>`).join('')}<td></td>`}));
+  document.getElementById(sid).textContent=brl(tG);
+}
+
+function tUpd(inp){
+  const k=inp.dataset.k,r=parseInt(inp.dataset.r),c=parseInt(inp.dataset.c);
+  tData[k][r][c]=inp.value.trim()===''?null:(parseFloat(inp.value.replace(/[R$\s.]/g,'').replace(',','.'))||null);
+  initTaxas();
+}
+
+function showTTab(n,el){
+  document.querySelectorAll('.tsec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tt-'+n).classList.add('on');el.classList.add('on');
+}
+
+function exportCSV(){
+  let csv='Empresa,Mês,Col1,Col2,Col3,Col4,Total\n';
+  MES.forEach((m,i)=>{const sl=tData.sl[i];csv+=`Superlógica,${m},${sl[0]||''},${sl[1]||''},,\n`;['co','so','cn','rg'].forEach(k=>{const r=tData[k][i];const t=r[0]!==null?r.reduce((a,b)=>a+(b||0),0):'';csv+=`${k},${m},${r[0]||''},${r[1]||''},${r[2]||''},${r[3]||''},${t}\n`;});});
+  const b=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='taxas_2026.csv';a.click();
+}
+
+// ════════════════════════════════
+// MULTAS
+// ════════════════════════════════
+const MUL0={
+  0:[{c:'516',n:'Pereira e Cortes Serv. Médicos e Odontológicos',v:318.15,dep:'DP',col:'Monique',obs:'-'},{c:'978',n:'Alheira & Mendonca Serv. Médicos',v:36.80,dep:'Fiscal',col:'Nathacha',obs:'Multa e juros por atraso. Descontado em 02.2026 no Superlógica'},{c:'517',n:'Ortho Sossa',v:1592.37,dep:'Fiscal',col:'Marceli',obs:'Auto de Infração do município de SP'},{c:'392',n:'Brenda',v:279.77,dep:'Fiscal',col:'Cayo',obs:'Multa e juros. Descontado em 02.2026 no Superlógica'},{c:'388',n:'RORRJ',v:14.28,dep:'Fiscal',col:'Rafaela',obs:'Multa e juros. Descontado em 02.2026 no Superlógica'},{c:'280',n:'Anestesia',v:6700.72,dep:'Fiscal',col:'Letícia/Adiana',obs:'Pagamos 31.221,50, seremos reembolsados em 24.520,78'},{c:'760',n:'Carla Ribeiro do Lago Storch',v:218.99,dep:'Legal',col:'Tamiris',obs:'Taxa relacionada ao fiscal'}],
+  1:[{c:'430',n:'Megadent',v:46.89,dep:'DP',col:'Kelline',obs:'Desconto no Superlógica - Pró-labore'},{c:'211',n:'Odontoalverca',v:37542.03,dep:'Fiscal',col:'Marceli',obs:'DAS'},{c:'923',n:'RIBEIRO & OLIVEIRA SERVICOS LTDA',v:263.36,dep:'Legal',col:'Tamiris',obs:'DAMSP'}],
+  2:[{c:'451',n:'Ferrato Pires Odontologia',v:19.06,dep:'DP',col:'Monique',obs:'Juros e Multa de uma guia'},{c:'398',n:'Reabilitação Oral e Emergência Odontológica Ltda',v:1415.58,dep:'Legal',col:'Tamiris',obs:'Despesa paga sem reembolso'},{c:'391',n:'Ruan Ribeiro De Oliveira',v:25,dep:'Fiscal',col:'Marceli',obs:'-'},{c:'482',n:'Caju Company Ltda',v:25,dep:'Fiscal',col:'Marceli',obs:'-'},{c:'540',n:'RAYNA ARAUJO TECNOLOGIA LTDA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'607',n:'LOPES LEBRAO SERVICOS LTDA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'681',n:'MELISSA TREINAMENTOS E DESENVOLVIMENTO LTDA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'698',n:'CLINICA DE NEUROCIRURGIA MBG',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'857',n:'CRELIER SERVICOS MEDICOS LTDA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'882',n:'MF FISIOTERAPIA E REABILITACAO LTDA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'899',n:'BRUNO RAMOS MARINHO SOC. IND. ADVOCA',v:25,dep:'Fiscal',col:'Vítor',obs:'-'},{c:'903',n:'NOVA GESTAO SOLUCOES EMPRESARIAIS LTDA',v:250,dep:'Fiscal',col:'Vítor',obs:'-'}],
+  3:[{c:'936',n:'Himp Solutions Ltda',v:477.01,dep:'Contábil - Fiscal e Letícia',col:'Vítor',obs:'Mande Um Zap 08/04/2026'},{c:'923',n:'Fisio Soul Fisioterapia E Microfisioterapia',v:66.24,dep:'Atendimento',col:'Nathacha',obs:'Mande Um Zap 07/04/2026'},{c:'723',n:'Fjm Ultrassonografia Avançada Ltda',v:585.50,dep:'Legal',col:'Tamiris',obs:'Mande Um Zap 08/04/2026 - Taxa Visa'},{c:'435',n:'Rafael Merola',v:779.47,dep:'Legal',col:'Tamiris',obs:'Chat 20/04/2026 - Sem reembolso - erro operacional'},{c:'1006',n:'Muller e Tiago',v:628.86,dep:'DP',col:'Leticia',obs:'Chat 20/04/2026 - reembolso em 05.2026 - Superlógica'},{c:'862',n:'Luciana Theodoro',v:1330.36,dep:'Fiscal',col:'Daniella',obs:'ISS'},{c:'862',n:'Luciana Theodoro',v:917.50,dep:'Fiscal',col:'Daniella',obs:'ISS'}],
+  4:[{c:'936',n:'Himp Solutions Ltda',v:28.21,dep:'Contábil',col:'Vítor',obs:'Mande Um Zap 08/04/2026'},{c:'760',n:'Carla Storch',v:908.85,dep:'',col:'Nathacha e Letícia',obs:'Mande Um Zap 07/04/2026 09:15:07'},{c:'849',n:'CAROLINE FLOSI SERVICOS MEDICOS LTDA',v:50,dep:'Fiscal',col:'Marceli',obs:'Chat'},{c:'660',n:'RBT',v:51.65,dep:'Fiscal',col:'Marceli',obs:'Chat'},{c:'532',n:'ROBERTO ROLIM',v:25,dep:'Fiscal',col:'Marceli',obs:'Chat'},{c:'684',n:'Dutra e Veloso',v:250,dep:'Fiscal',col:'Marceli',obs:'Chat - 21/05/2026 - multa por atraso DCTFWEB'},{c:'948',n:'INSTITUTO PLENAVITA',v:650,dep:'Legal',col:'Tamiris',obs:'Jucerja - chat 25/05/2026 - sem reembolso'}]
+};
+function loadMul(){try{const s=localStorage.getItem('s_ml');if(s)return JSON.parse(s);}catch(e){}
+  const d={};MES.forEach((_,i)=>{d[i]=MUL0[i]?JSON.parse(JSON.stringify(MUL0[i])):[];});return d;}
+let mulData=loadMul();
+
+function initMultas(){
+  const tc=document.getElementById('mtabs-multas');
+  const pc=document.getElementById('mpanels-multas');
+  MES.forEach((m,i)=>{
+    const t=document.createElement('button');t.className='mtab';t.textContent=m.substring(0,3);
+    t.onclick=(()=>{const idx=i;return()=>showMTab('multas',idx);})();
+    if((mulData[i]||[]).length>0)t.classList.add('hd');tc.appendChild(t);
+    const p=document.createElement('div');p.className='mpanel';p.id='mpanel-multas-'+i;pc.appendChild(p);
+  });
+  MES.forEach((_,i)=>renderMultasPanel(i));
+  showMTab('multas',0);renderAtMul();renderMulCards();
+}
+
+function renderMultasPanel(mi){
+  const p=document.getElementById('mpanel-multas-'+mi);if(!p)return;
+  const rows=mulData[mi]||[];const tot=rows.reduce((a,r)=>a+(parseFloat(r.v)||0),0);
+  p.innerHTML=`<div class="cards">
+    <div class="card"><div class="clbl">Total do mês</div><div class="cval cr">${brl(tot)}</div></div>
+    <div class="card"><div class="clbl">Ocorrências</div><div class="cval cy">${rows.length}</div></div>
+  </div>
+  <div class="mwrap"><table class="mt">
+    <thead><tr><th>Código</th><th>Nome</th><th style="text-align:right">Valor</th><th>Departamento</th><th>Colaborador</th><th>Observação</th><th></th></tr></thead>
+    <tbody id="mulb-${mi}"></tbody>
+  </table></div>
+  <button class="badd" onclick="addMul(${mi})">+ Adicionar linha</button>`;
+  renderMulRows(mi);
+}
+
+function renderMulRows(mi){
+  const tb=document.getElementById('mulb-'+mi);if(!tb)return;tb.innerHTML='';
+  const rows=mulData[mi]||[];
+  rows.forEach((r,ri)=>{const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input class="minp" value="${r.c||''}" placeholder="Cód." onchange="updMul(${mi},${ri},'c',this.value)" style="width:55px"></td>
+  <td><input class="minp" value="${r.n||''}" placeholder="Nome" onchange="updMul(${mi},${ri},'n',this.value)" style="min-width:130px"></td>
+  <td><input class="minp minp-v" value="${r.v||''}" placeholder="0,00" onchange="updMulV(${mi},${ri},this.value)" style="width:80px"></td>
+  <td><input class="minp" value="${r.dep||''}" placeholder="Depto." onchange="updMul(${mi},${ri},'dep',this.value)" style="min-width:80px"></td>
+  <td><input class="minp" value="${r.col||''}" placeholder="Colaborador" onchange="updMul(${mi},${ri},'col',this.value)" style="min-width:75px"></td>
+  <td><input class="minp" value="${r.obs||''}" placeholder="Observação" onchange="updMul(${mi},${ri},'obs',this.value)" style="min-width:130px"></td>
+  <td><button class="bdel" onclick="delMul(${mi},${ri})">✕</button></td>`;
+  tb.appendChild(tr);});
+  const tot=rows.reduce((a,r)=>a+(parseFloat(r.v)||0),0);
+  if(rows.length>0){const tt=document.createElement('tr');tt.className='mtr';tt.innerHTML=`<td colspan="2">Total</td><td style="text-align:right">${brl(tot)}</td><td colspan="4"></td>`;tb.appendChild(tt);}
+}
+
+function updMul(mi,ri,f,v){if(!mulData[mi])mulData[mi]=[];mulData[mi][ri][f]=v;}
+function updMulV(mi,ri,v){if(!mulData[mi])mulData[mi]=[];mulData[mi][ri].v=parseFloat(v.replace(/[R$\s.]/g,'').replace(',','.'))||0;renderMultasPanel(mi);renderAtMul();renderMulCards();}
+function addMul(mi){if(!mulData[mi])mulData[mi]=[];mulData[mi].push({c:'',n:'',v:0,dep:'',col:'',obs:''});renderMultasPanel(mi);}
+function delMul(mi,ri){mulData[mi].splice(ri,1);renderMultasPanel(mi);renderAtMul();renderMulCards();}
+
+function renderAtMul(){
+  const tb=document.getElementById('at-mul');if(!tb)return;tb.innerHTML='';let gt=0;
+  MES.forEach((m,i)=>{const rows=mulData[i]||[];const tot=rows.reduce((a,r)=>a+(parseFloat(r.v)||0),0);gt+=tot;
+  const tr=document.createElement('tr');tr.innerHTML=`<td>${m}</td><td style="text-align:right;color:${tot>0?'var(--red)':'var(--brd)'};font-family:'DM Mono',monospace">${tot>0?brl(tot):'—'}</td><td style="color:var(--mut)">${rows.length>0?rows.length+' ocorrência'+(rows.length>1?'s':''):'—'}</td>`;tb.appendChild(tr);});
+  const tt=document.createElement('tr');tt.className='tr';tt.innerHTML=`<td><strong>Total 2026</strong></td><td style="text-align:right;color:var(--red)">${brl(gt)}</td><td></td>`;tb.appendChild(tt);
+}
+
+function renderMulCards(){
+  const ct=document.getElementById('mul-cards');if(!ct)return;
+  const tots=MES.map((_,i)=>(mulData[i]||[]).reduce((a,r)=>a+(parseFloat(r.v)||0),0));
+  const gt=tots.reduce((a,b)=>a+b,0);const mx=tots.indexOf(Math.max(...tots));const tc=MES.reduce((a,_,i)=>a+(mulData[i]||[]).length,0);
+  ct.innerHTML=`<div class="card"><div class="clbl">Total 2026</div><div class="cval cr">${brl(gt)}</div></div><div class="card"><div class="clbl">Ocorrências no ano</div><div class="cval cy">${tc}</div></div><div class="card"><div class="clbl">Mês com maior valor</div><div class="cval cb">${MES[mx]}</div><div class="csub">${brl(tots[mx])}</div></div>`;
+}
+
+// ════════════════════════════════
+// RELATORIO
+// ════════════════════════════════
+const REL0={
+  0:{hv:100136.08,pf:79640.20,par:831.83,cm:null,cro:null,reg:null,
+     perda:[],
+     nc:[{cod:'961',nome:'',val:null},{cod:'965',nome:'',val:null},{cod:'973',nome:'',val:null},{cod:'976',nome:'',val:null},{cod:'978',nome:'',val:null},{cod:'979',nome:'',val:null},{cod:'980',nome:'',val:null},{cod:'991',nome:'',val:null}],
+     nl_val:4752.83,nl_obs:'8 clientes — Total = R$4.752,83',
+     dc:[{cod:'902',nome:'Prestação de serviços paralisada em 11.2025',val:null}],
+     bl_qt:4,bl_det:'Em janeiro foram bloqueados 4 clientes.'},
+  1:{hv:103846.96,pf:null,par:null,cm:8572.16,cro:null,reg:null,
+     perda:[{cod:'967',val:417},{cod:'873',val:417},{cod:'794',val:341.51},{cod:'700',val:953.51},{cod:'846',val:570.32}],
+     nc:[{cod:'21 clientes',nome:'',val:null}],
+     nl_val:468.01,nl_obs:'20 clientes, exceto 990 Hallack Araujo Serviços Médicos',
+     dc:[{cod:'923',nome:'',val:547},{cod:'70050',nome:'',val:397},{cod:'1000',nome:'',val:397},{cod:'888',nome:'',val:542},{cod:'70050',nome:'',val:187.15},{cod:'910',nome:'',val:2160.44},{cod:'283',nome:'',val:246.92},{cod:'625',nome:'',val:487.70},{cod:'70043',nome:'',val:169.36},{cod:'1008',nome:'',val:317}],
+     bl_qt:3,bl_det:'725 — 392,94 (média 3 meses)\n327 — 610,17 (média 3 meses)\n920 — 397,00 (média 3 meses)\nTotal = R$1.400,11'},
+  2:{hv:115162.65,pf:null,par:null,cm:856.28,cro:1976,reg:null,
+     perda:[{cod:'537',val:461.68}],
+     nc:[{cod:'951',nome:'',val:null},{cod:'962',nome:'',val:null},{cod:'963',nome:'',val:null},{cod:'966',nome:'',val:null},{cod:'988',nome:'',val:null},{cod:'1001',nome:'',val:null},{cod:'1010',nome:'',val:null},{cod:'1011',nome:'',val:null},{cod:'1012',nome:'',val:null},{cod:'1017',nome:'',val:null},{cod:'1020',nome:'',val:null},{cod:'1024',nome:'',val:null}],
+     nl_val:6788.10,nl_obs:'12 clientes — Total = R$6.788,10',
+     dc:[{cod:'698',nome:'',val:600},{cod:'474',nome:'',val:1995.50},{cod:'704',nome:'',val:437.67},{cod:'971',nome:'',val:216.57},{cod:'18',nome:'',val:409.27},{cod:'70024',nome:'',val:177.78},{cod:'920',nome:'',val:397},{cod:'77',nome:'',val:116.76},{cod:'194',nome:'',val:530.79},{cod:'286',nome:'',val:503.36}],
+     bl_qt:12,bl_det:'417—378,32 | 782—341,51 | 924—325,84\nTotal = R$1.045,67'},
+  3:{hv:114180.99,pf:null,par:null,cm:84.56,cro:985,reg:7413.03,
+     perda:[{cod:'201',val:700.02},{cod:'560',val:685.37},{cod:'715',val:341.51},{cod:'760',val:715.49},{cod:'630',val:477.51},{cod:'630',val:317},{cod:'953',val:1087.06},{cod:'900',val:317}],
+     nc:[{cod:'1004',nome:'Dra. Bruno Azezel (Médica Autônoma)',val:null},{cod:'70053',nome:'Matheus Araujo Jeovani',val:null},{cod:'1016',nome:'Scallfort Saúde & Educação',val:null},{cod:'1018',nome:'Tecnovan Cursos e Serviços Fonoaudiológicos',val:null},{cod:'1023',nome:"Giovanni's Cabeleireiro Ltda",val:null},{cod:'1025',nome:'Henrique Michellin Toledo',val:null},{cod:'1026',nome:'C.A.Caligoprctologia',val:null},{cod:'1027',nome:'Dra Priscilla Barreto',val:null},{cod:'1029',nome:'Clínica Patricia Fernandez Dutra Ltda',val:null},{cod:'1030',nome:'Beatriz Domingues Psicologia Clínica',val:null},{cod:'1031',nome:'Resolve Sei',val:null},{cod:'1032',nome:'Amorim Martel Clínica Médica Ltda',val:null},{cod:'1033',nome:'Mima Serviços Médicos',val:null},{cod:'1034',nome:'Ego Dialogos',val:null},{cod:'1035',nome:'Alice Ferreira Freitas',val:null},{cod:'1038',nome:'C.M. Serviços Especializados Ltda',val:null},{cod:'1047',nome:'Juliana Oliveira De Almeida Ltda',val:null},{cod:'1050',nome:'Rubião Gonçalves Da Silva',val:null}],
+     nl_val:8980.77,nl_obs:'19 clientes — Total = R$8.980,77',
+     dc:[{cod:'632',nome:'',val:485.40},{cod:'303',nome:'',val:773.76},{cod:'313',nome:'',val:3400},{cod:'625',nome:'',val:487.70},{cod:'694',nome:'',val:273},{cod:'838',nome:'',val:33.74},{cod:'963',nome:'pagamento feito pela Sampali',val:null},{cod:'1910',nome:'',val:357},{cod:'910',nome:'mesma competência que entrou',val:null},{cod:'1022',nome:'',val:317},{cod:'987',nome:'estamos cobrando só a 684',val:null},{cod:'916',nome:'Desconto comercial 160,60',val:null},{cod:'1009',nome:'',val:357}],
+     bl_qt:null,bl_det:'Clientes — última competência 03.2026 cobrada em março de 2026.'}
+};
+
+function loadRel(){
+  try{
+    const s=localStorage.getItem('s_rl');
+    const v=localStorage.getItem('s_rl_v');
+    if(s&&v==='3'){return JSON.parse(s);}
+    localStorage.removeItem('s_rl');
+  }catch(e){localStorage.removeItem('s_rl');}
+  const d={};
+  MES.forEach((_,i)=>{
+    d[i]=REL0[i]?JSON.parse(JSON.stringify(REL0[i])):{hv:null,pf:null,par:null,cm:null,cro:null,reg:null,perda:[],nc:[],nl_val:null,nl_obs:'',dc:[],bl_qt:null,bl_det:''};
+  });
+  return d;
+}
+let relData=loadRel();
+
+function relTot(mi){const d=relData[mi];return[d.hv,d.pf,d.par,d.cm,d.cro,d.reg].reduce((a,v)=>a+(v||0),0);}
+
+function initRelatorio(){
+  const tc=document.getElementById('mtabs-relatorio');
+  const pc=document.getElementById('mpanels-relatorio');
+  MES.forEach((m,i)=>{
+    const t=document.createElement('button');t.className='mtab';t.textContent=m.substring(0,3);
+    t.onclick=(()=>{const idx=i;return()=>showMTab('relatorio',idx);})();
+    if(relData[i].hv!==null||(relData[i].nc&&relData[i].nc.length>0))t.classList.add('hd');
+    tc.appendChild(t);
+    const p=document.createElement('div');p.className='mpanel';p.id='mpanel-relatorio-'+i;pc.appendChild(p);
+  });
+  MES.forEach((_,i)=>renderRelPanel(i));
+  showMTab('relatorio',0);renderAtRel();renderRelCards();
+}
+
+function renderRelPanel(mi){
+  const p=document.getElementById('mpanel-relatorio-'+mi);if(!p)return;
+  const d=relData[mi];const tot=relTot(mi);
+  const perdaTot=d.perda.reduce((a,r)=>a+(r.val||0),0);
+  const dcTot=d.dc.reduce((a,r)=>a+(r.val||0),0);
+
+  p.innerHTML=`
+  
+
+  <div class="rsec"><div class="rshdr">📈 Receita incremental de clientes recorrentes</div><div class="rsbody">
+    <div class="rfrow"><span class="rflbl">Honorário variável</span><input class="rfinp" id="rhv-${mi}" value="${d.hv||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'hv',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">Parcela de fechamento anual</span><input class="rfinp" id="rpf-${mi}" value="${d.pf||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'pf',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">Parcelamentos</span><input class="rfinp" id="rpar-${mi}" value="${d.par||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'par',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">Correção monetária</span><input class="rfinp" id="rcm-${mi}" value="${d.cm||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'cm',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">CRO e CRM - Legal</span><input class="rfinp" id="rcro-${mi}" value="${d.cro||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'cro',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">Regularizando</span><input class="rfinp" id="rreg-${mi}" value="${d.reg||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'reg',this.value)"></div>
+    <div class="rfrow" style="border-top:1px solid var(--brd);margin-top:4px"><span class="rflbl" style="font-weight:600;color:var(--txt)">Total</span><span class="rfdisplay" id="rtot-${mi}">${tot>0?brl(tot):'—'}</span></div>
+  </div></div>
+
+  <div class="rsec"><div class="rshdr">📉 Perda — Isenção por indicação</div><div class="rsbody">
+    <table class="rtable"><thead><tr><th>Código</th><th style="text-align:right">Valor (R$)</th><th style="width:30px"></th></tr></thead><tbody id="rperda-${mi}"></tbody></table>
+    <button class="badd" onclick="addRelRow(${mi},'perda')">+ Adicionar</button>
+  </div></div>
+
+  <div class="rsec"><div class="rshdr">🆕 Clientes novos — cobrança gerada no mês</div><div class="rsbody">
+    <table class="rtable"><thead><tr><th>Código</th><th>Nome</th><th style="text-align:right">Valor (R$)</th><th style="width:30px"></th></tr></thead><tbody id="rnc-${mi}"></tbody></table>
+    <button class="badd" onclick="addRelRow(${mi},'nc')">+ Adicionar</button>
+  </div></div>
+
+  <div class="rsec"><div class="rshdr">✅ Clientes novos — cobrança gerada e liquidada</div><div class="rsbody">
+    <div class="rfrow"><span class="rflbl">Total em R$</span><input class="rfinp" value="${d.nl_val||''}" placeholder="R$ 0,00" onchange="updRelNum(${mi},'nl_val',this.value)"></div>
+    <div class="rfrow"><span class="rflbl">Observação</span><input class="rfinp" value="${d.nl_obs||''}" placeholder="Observação..." onchange="updRelTxt(${mi},'nl_obs',this.value)"></div>
+  </div></div>
+
+  <div class="rsec"><div class="rshdr">🚪 Clientes que deixaram de ter cobrança</div><div class="rsbody">
+    <table class="rtable"><thead><tr><th>Código</th><th>Observação</th><th style="text-align:right">Valor (R$)</th><th style="width:30px"></th></tr></thead><tbody id="rdc-${mi}"></tbody></table>
+    <button class="badd" onclick="addRelRow(${mi},'dc')">+ Adicionar</button>
+  </div></div>
+
+  <div class="rsec"><div class="rshdr">🔒 Clientes bloqueados por não pagamento</div><div class="rsbody">
+    <div class="rfrow"><span class="rflbl">Quantidade</span><input class="rfinp" value="${d.bl_qt||''}" placeholder="0" onchange="updRelTxt(${mi},'bl_qt',this.value)" style="width:80px"></div>
+    <div class="rfrow"><span class="rflbl">Detalhes</span><textarea class="rftarea" onchange="updRelTxt(${mi},'bl_det',this.value)">${d.bl_det||''}</textarea></div>
+  </div></div>`;
+
+  renderRelRows(mi);
+}
+
+function renderRelRows(mi){
+  const d=relData[mi];
+
+  // PERDA
+  const pt=document.getElementById('rperda-'+mi);
+  if(pt){pt.innerHTML='';
+    d.perda.forEach((r,ri)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input class="minp" value="${r.cod||''}" placeholder="Código" onchange="updRelRow(${mi},'perda',${ri},'cod',this.value)" style="width:80px"></td>
+    <td style="text-align:right"><input class="minp minp-v" value="${r.val||''}" placeholder="0,00" onchange="updRelRowVal(${mi},'perda',${ri},this.value)" style="width:100px;text-align:right"></td>
+    <td><button class="bdel" onclick="delRelRow(${mi},'perda',${ri})">✕</button></td>`;
+    pt.appendChild(tr);});
+    const tot=d.perda.reduce((a,r)=>a+(r.val||0),0);
+    if(d.perda.length>0){const tr=document.createElement('tr');tr.className='rtot';tr.innerHTML=`<td style="color:var(--mut);font-size:.79rem">Total — ${d.perda.length} cliente(s)</td><td style="text-align:right;color:var(--red);font-family:'DM Mono',monospace">${brl(tot)}</td><td></td>`;pt.appendChild(tr);}
+  }
+
+  // NOVOS COBRANÇA
+  const nt=document.getElementById('rnc-'+mi);
+  if(nt){nt.innerHTML='';
+    d.nc.forEach((r,ri)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input class="minp" value="${r.cod||''}" placeholder="Código" onchange="updRelRow(${mi},'nc',${ri},'cod',this.value)" style="width:80px"></td>
+    <td><input class="minp" value="${r.nome||''}" placeholder="Nome do cliente" onchange="updRelRow(${mi},'nc',${ri},'nome',this.value)" style="min-width:160px"></td>
+    <td style="text-align:right"><input class="minp" style="text-align:right;font-family:'DM Mono',monospace;width:95px" value="${r.val||''}" placeholder="0,00" onchange="updRelRowVal(${mi},'nc',${ri},this.value)"></td>
+    <td><button class="bdel" onclick="delRelRow(${mi},'nc',${ri})">✕</button></td>`;
+    nt.appendChild(tr);});
+    const ncTot=d.nc.reduce((a,r)=>a+(r.val||0),0);
+    if(d.nc.length>0){const tr=document.createElement('tr');tr.className='rtot';tr.innerHTML=`<td style="color:var(--mut);font-size:.77rem">Total: ${d.nc.length} cliente(s)</td><td></td><td style="text-align:right;color:var(--acc);font-family:'DM Mono',monospace">${ncTot>0?brl(ncTot):'—'}</td><td></td>`;nt.appendChild(tr);}
+  }
+
+  // DEIXARAM
+  const dt=document.getElementById('rdc-'+mi);
+  if(dt){dt.innerHTML='';
+    d.dc.forEach((r,ri)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input class="minp" value="${r.cod||''}" placeholder="Código" onchange="updRelRow(${mi},'dc',${ri},'cod',this.value)" style="width:80px"></td>
+    <td><input class="minp" value="${r.nome||''}" placeholder="Observação" onchange="updRelRow(${mi},'dc',${ri},'nome',this.value)" style="min-width:130px"></td>
+    <td style="text-align:right"><input class="minp minp-v" value="${r.val||''}" placeholder="0,00" onchange="updRelRowVal(${mi},'dc',${ri},this.value)" style="width:90px;text-align:right"></td>
+    <td><button class="bdel" onclick="delRelRow(${mi},'dc',${ri})">✕</button></td>`;
+    dt.appendChild(tr);});
+    const tot=d.dc.reduce((a,r)=>a+(r.val||0),0);
+    if(d.dc.length>0){const tr=document.createElement('tr');tr.className='rtot';tr.innerHTML=`<td colspan="2" style="color:var(--mut);font-size:.79rem">Total — ${d.dc.length} cliente(s)</td><td style="text-align:right;color:var(--ylw);font-family:'DM Mono',monospace">${tot>0?brl(tot):'—'}</td><td></td>`;dt.appendChild(tr);}
+  }
+}
+
+function updRelNum(mi,f,v){relData[mi][f]=parseFloat(v.replace(/[R$\s.]/g,'').replace(',','.'))||null;
+  const t=document.getElementById('rtot-'+mi);if(t)t.textContent=relTot(mi)>0?brl(relTot(mi)):'—';
+  renderAtRel();renderRelCards();}
+function updRelTxt(mi,f,v){relData[mi][f]=v;renderAtRel();renderRelCards();}
+function updRelRow(mi,sec,ri,f,v){relData[mi][sec][ri][f]=v;}
+function updRelRowVal(mi,sec,ri,v){relData[mi][sec][ri].val=parseFloat(v.replace(/[R$\s.]/g,'').replace(',','.'))||0;renderRelRows(mi);renderAtRel();renderRelCards();}
+function addRelRow(mi,sec){
+  if(sec==='perda')relData[mi].perda.push({cod:'',val:0});
+  else if(sec==='nc')relData[mi].nc.push({cod:'',nome:'',val:0});
+  else if(sec==='dc')relData[mi].dc.push({cod:'',nome:'',val:null});
+  renderRelRows(mi);renderAtRel();renderRelCards();
+}
+function delRelRow(mi,sec,ri){relData[mi][sec].splice(ri,1);renderRelRows(mi);renderAtRel();renderRelCards();}
+
+function renderAtRel(){
+  const tb=document.getElementById('at-rel');if(!tb)return;tb.innerHTML='';
+  const rows=[
+    {l:'Receita incremental',fn:(d)=>{const t=relTot2(d);return t>0?{v:brl(t),c:'var(--acc2)'}:{v:'—',c:'var(--brd)'};}},
+    {l:'Perda',fn:(d)=>d.perda&&d.perda.length>0?{v:brl(d.perda.reduce((a,r)=>a+(r.val||0),0)),c:'var(--red)'}:{v:'—',c:'var(--brd)'}},
+    {l:'Novos c/ cobrança',fn:(d)=>d.nc&&d.nc.length>0?{v:d.nc.length+' cli.',c:'var(--acc)'}:{v:'—',c:'var(--brd)'}},
+    {l:'Novos liquidados',fn:(d)=>d.nl_val?{v:brl(d.nl_val),c:'var(--grn)'}:{v:'—',c:'var(--brd)'}},
+    {l:'Deixaram cobrança',fn:(d)=>d.dc&&d.dc.length>0?{v:d.dc.length+' cli.',c:'var(--ylw)'}:{v:'—',c:'var(--brd)'}},
+    {l:'Bloqueados',fn:(d)=>d.bl_qt?{v:d.bl_qt+' cli.',c:'var(--red)'}:{v:'—',c:'var(--brd)'}}
+  ];
+  rows.forEach(row=>{const tr=document.createElement('tr');let cells=`<td>${row.l}</td>`;
+  MES.forEach((_,i)=>{const res=row.fn(relData[i]);cells+=`<td style="color:${res.c};font-family:'DM Mono',monospace">${res.v}</td>`;});
+  tr.innerHTML=cells;tb.appendChild(tr);});
+}
+function relTot2(d){return[d.hv,d.pf,d.par,d.cm,d.cro,d.reg].reduce((a,v)=>a+(v||0),0);}
+function renderRelCards(){
+  const ct=document.getElementById('rel-cards');if(!ct)return;
+  const tn=MES.reduce((a,_,i)=>a+(relData[i].nc?relData[i].nc.length:0),0);
+  ct.innerHTML=`<div class="card"><div class="clbl">Novos clientes 2026</div><div class="cval cb">${tn||'—'}</div></div>`;
+}
+
+// ── INIT ──
+initMargem();
+initTaxas();
+initMultas();
+initRelatorio();
+rcInit();
+
+// ── BACKUP EXPORT / IMPORT ──
+function exportarDados(){
+  var payload={
+    versao:1,
+    data:new Date().toISOString().slice(0,10),
+    margem:mData,
+    taxas:tData,
+    multas:mulData,
+    relatorio:relData,
+    receita:rcData
+  };
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='dashboard_sampali_backup_'+payload.data+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  var m=document.getElementById('backup-msg');
+  m.textContent='✓ Backup exportado!';m.style.display='inline';
+  setTimeout(function(){m.style.display='none';},3000);
+}
+
+function importarDados(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      if(d.versao!==1){alert('Arquivo inválido ou versão incompatível.');return;}
+      if(d.margem){mData=d.margem;localStorage.setItem('s_mg',JSON.stringify(mData));initMargem();}
+      if(d.taxas){tData=d.taxas;localStorage.setItem('s_tx',JSON.stringify(tData));initTaxas();}
+      if(d.multas){mulData=d.multas;localStorage.setItem('s_ml',JSON.stringify(mulData));initMultas();}
+      if(d.relatorio){relData=d.relatorio;localStorage.setItem('s_rl',JSON.stringify(relData));localStorage.setItem('s_rl_v','3');initRelatorio();}
+      if(d.receita){rcData=d.receita;localStorage.setItem('s_rc',JSON.stringify(rcData));rcRender();}
+      var m=document.getElementById('backup-msg');
+      m.textContent='✓ Backup importado com sucesso!';m.style.display='inline';
+      setTimeout(function(){m.style.display='none';},3000);
+    }catch(err){alert('Erro ao importar: '+err.message);}
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+</script>
+</body>
+</html>
